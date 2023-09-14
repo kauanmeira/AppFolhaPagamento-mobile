@@ -1,9 +1,9 @@
-import 'dart:convert';
+import 'dart:io';
 
 import 'package:app_folha_pagamento/pages/login_page.dart';
+import 'package:app_folha_pagamento/services/HttpService.dart';
+import 'package:app_folha_pagamento/services/usuario_service.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:io'; // Importe a biblioteca dart:io
 
 class CadastroUsuario extends StatefulWidget {
   const CadastroUsuario({Key? key});
@@ -16,6 +16,8 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
   TextEditingController nomeController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController senhaController = TextEditingController();
+  String? feedbackMessage;
+  final UsuarioService usuarioService = UsuarioService();
 
   @override
   void dispose() {
@@ -28,7 +30,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
   @override
   void initState() {
     super.initState();
-    HttpOverrides.global = MyHttpOverrides();
+    HttpOverrides.global = HttpService();
   }
 
   Future<void> _cadastrar() async {
@@ -37,38 +39,35 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
     String email = emailController.text;
     String senha = senhaController.text;
 
-    Map<String, String> cadastroData = {
-      'nome': nome,
-      'email': email,
-      'senha': senha,
-    };
-
     try {
-      final response = await http.post(
-        Uri.parse('https://192.168.20.240:7256/api/usuario'),
-        body: jsonEncode(
-            cadastroData), // Certifique-se de importar 'dart:convert'.
-        headers: {
-          'Content-Type':
-              'application/json', // Defina o tipo de mídia como JSON.
-        },
-      );
+      await usuarioService.cadastrarUsuario(nome, email, senha);
+      setState(() {
+        feedbackMessage = 'Usuário Cadastrado com Sucesso';
+      });
 
-      if (response.statusCode == 200) {
-        print('Usuário Cadastrado! Resposta da API: ${response.body}');
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => LoginPage(),
-          ),
-        );
-      } else {
-        print(
-            'Erro ao fazer Cadastro do usuario. Código de status: ${response.statusCode}');
-      }
+      // Redireciona para a tela de login após o cadastro bem-sucedido
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LoginPage(),
+        ),
+      );
     } catch (error) {
-      print('Erro ao fazer Cadastro: $error');
+      setState(() {
+        feedbackMessage = error.toString();
+      });
     }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      feedbackMessage != null
+          ? SnackBar(
+              content: Text(feedbackMessage!),
+              backgroundColor: feedbackMessage!.contains('Sucesso')
+                  ? Colors.green
+                  : Colors.red,
+            )
+          : SnackBar(content: Text('Erro desconhecido')),
+    );
   }
 
   @override
@@ -162,14 +161,5 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
         ),
       ),
     );
-  }
-}
-
-class MyHttpOverrides extends HttpOverrides {
-  @override
-  HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)
-      ..badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
   }
 }

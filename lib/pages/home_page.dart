@@ -1,10 +1,11 @@
+import 'package:app_folha_pagamento/pages/cargos/home_cargos_page.dart';
+import 'package:app_folha_pagamento/pages/colaboradores/home_colaboradores_page.dart';
 import 'package:app_folha_pagamento/pages/login_page.dart';
+import 'package:app_folha_pagamento/pages/usuarios/home_usuarios_page.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -45,61 +46,79 @@ class HomePage extends StatelessWidget {
         child: Container(
           child: ListView(
             children: [
-              Container(
-                height: 70,
-                alignment: Alignment.centerLeft,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    stops: [0.3, 1],
-                    colors: [
-                      Color(0xFF008584),
-                      Color(0xFF007C70),
-                    ],
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomeColaboradoresPage(),
+                    ),
+                  );
+                },
+                child: Container(
+                  height: 70,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      stops: [0.3, 1],
+                      colors: [
+                        Color(0xFF008584),
+                        Color(0xFF007C70),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(12),
+                    ),
                   ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(12),
-                  ),
-                ),
-                child: TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    "Colaboradores",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Colaboradores",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
               ),
               SizedBox(height: 30),
-              Container(
-                height: 70,
-                alignment: Alignment.centerLeft,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    stops: [0.3, 1],
-                    colors: [
-                      Color(0xFF008584),
-                      Color(0xFF007C70),
-                    ],
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomeCargosPage(),
+                    ),
+                  );
+                },
+                child: Container(
+                  height: 70,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      stops: [0.3, 1],
+                      colors: [
+                        Color(0xFF008584),
+                        Color(0xFF007C70),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(12),
+                    ),
                   ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(12),
-                  ),
-                ),
-                child: TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    "Cargos",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Cargos",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -107,62 +126,74 @@ class HomePage extends StatelessWidget {
               SizedBox(
                 height: 30,
               ),
-              Container(
-                height: 70,
-                alignment: Alignment.centerLeft,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    stops: [0.3, 1],
-                    colors: [
-                      Color(0xFF008584),
-                      Color(0xFF007C70),
-                    ],
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomeUsuariosPage(),
+                    ),
+                  );
+                },
+                child: Container(
+                  height: 70,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      stops: [0.3, 1],
+                      colors: [
+                        Color(0xFF008584),
+                        Color(0xFF007C70),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
                   ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                ),
-                child: TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    "Usuários",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Usuários",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
               ),
               SizedBox(height: 30),
-              Container(
-                height: 70,
-                alignment: Alignment.centerLeft,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    stops: [0.3, 1],
-                    colors: [
-                      Color(0xFF008584),
-                      Color(0xFF007C70),
-                    ],
+              InkWell(
+                onTap: () {
+                  // Adicione a ação desejada aqui
+                },
+                child: Container(
+                  height: 70,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      stops: [0.3, 1],
+                      colors: [
+                        Color(0xFF008584),
+                        Color(0xFF007C70),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
                   ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                ),
-                child: TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    "Holerites",
-                    style: TextStyle(
-                      
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Holerites",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),

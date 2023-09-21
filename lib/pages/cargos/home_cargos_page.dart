@@ -1,9 +1,8 @@
-import 'dart:convert';
+import 'package:app_folha_pagamento/pages/cargos/editar_cargo.dart';
+import 'package:flutter/material.dart';
 import 'package:app_folha_pagamento/models/Cargos.dart';
 import 'package:app_folha_pagamento/pages/cargos/cadastro_cargo.dart';
 import 'package:app_folha_pagamento/services/cargo_service.dart';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 class HomeCargosPage extends StatefulWidget {
   const HomeCargosPage({Key? key}) : super(key: key);
@@ -19,7 +18,67 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
   @override
   void initState() {
     super.initState();
-    cargos = cargoService.obterCargos();
+    recarregarDadosCargos();
+  }
+
+  Future<void> recarregarDadosCargos() async {
+    setState(() {
+      cargos = cargoService.obterCargos();
+    });
+  }
+
+  Future<void> _confirmarExclusao(Cargos cargo) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Deseja realmente excluir este cargo?'),
+          content: Text('Cargo: ${cargo.nome}'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Sim'),
+              onPressed: () async {
+                try {
+                  String? mensagem = await cargoService.excluirCargo(cargo.id!);
+                  if (mensagem != null) {
+                    // Exibe a mensagem de sucesso
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(mensagem),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+
+                    // Fecha o diálogo
+                    Navigator.of(context).pop();
+
+                    // Recarrega os dados após a exclusão
+                    recarregarDadosCargos();
+                  }
+                } catch (error) {
+                  // Lida com erros ao excluir
+                  print('Erro ao excluir cargo: $error');
+                  // Exibe uma mensagem de erro se necessário
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Erro ao excluir cargo: $error'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              },
+            ),
+            TextButton(
+              child: Text('Não'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Fecha o diálogo
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -52,13 +111,25 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
                         IconButton(
                           icon: Icon(Icons.edit),
                           onPressed: () {
-                            // Coloque aqui a lógica para edição
+                            Navigator.of(context)
+                                .push(
+                              MaterialPageRoute(
+                                builder: (context) => EditarCargo(
+                                  cargoId: cargo.id!,
+                                  recarregarDadosCargos: recarregarDadosCargos,
+                                ),
+                              ),
+                            )
+                                .then((value) {
+                              // Após a edição, os dados serão recarregados automaticamente
+                            });
                           },
                         ),
                         IconButton(
                           icon: Icon(Icons.delete, color: Colors.red),
                           onPressed: () {
-                            // Coloque aqui a lógica para exclusão
+                            _confirmarExclusao(
+                                cargo); // Chame a função de confirmação
                           },
                         ),
                       ],
@@ -73,11 +144,15 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Color(0xFF008584),
         onPressed: () {
-          Navigator.of(context).push(
+          Navigator.of(context)
+              .push(
             MaterialPageRoute(
               builder: (context) => CadastroCargo(),
             ),
-          );
+          )
+              .then((value) {
+            recarregarDadosCargos();
+          });
         },
         child: Icon(Icons.add),
       ),

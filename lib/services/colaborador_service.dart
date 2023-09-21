@@ -7,18 +7,22 @@ class ColaboradorService {
   final String baseUrl = 'https://192.168.0.240:7256/api';
 
   Future<String> cadastrarColaborador(
-    String cpf,
-    String nome,
-    String sobrenome,
-    String salarioBase,
-    String dataNascimento,
-    String dataAdmissao,
-    int dependentes,
-    int filhos,
-    int cargoId,
-    int empresaId,
-    String cep,
-  ) async {
+      String cpf,
+      String nome,
+      String sobrenome,
+      String salarioBase,
+      String dataNascimento,
+      String dataAdmissao,
+      int dependentes,
+      int filhos,
+      int cargoId,
+      int empresaId,
+      String cep,
+      String logradouro,
+      int numero,
+      String bairro,
+      String cidade,
+      String estado) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/colaboradores'),
@@ -33,7 +37,12 @@ class ColaboradorService {
           'filhos': filhos,
           'cargoId': cargoId,
           'empresaId': empresaId,
-          'cep': cep
+          'cep': cep,
+          'logradouro': logradouro,
+          'numero': numero,
+          'bairro': bairro,
+          'cidade': cidade,
+          'estado': estado
         }),
         headers: {'Content-Type': 'application/json'},
       );
@@ -62,6 +71,30 @@ class ColaboradorService {
       return listaUsuarios.map((json) => Colaboradores.fromJson(json)).toList();
     } else {
       throw Exception('Erro, não foi possível carregar os colaboradores');
+    }
+  }
+
+  Future<Map<String, dynamic>> consultarCEP(String cep) async {
+    final response =
+        await http.get(Uri.parse('https://viacep.com.br/ws/$cep/json/'));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      if (data.containsKey('erro')) {
+        return {
+          'error': 'CEP não encontrado',
+        };
+      } else {
+        return {
+          'logradouro': data['logradouro'],
+          'bairro': data['bairro'],
+          'cidade': data['localidade'],
+          'estado': data['uf'],
+        };
+      }
+    } else {
+      throw Exception('Erro ao buscar o endereço');
     }
   }
 }

@@ -71,4 +71,57 @@ class UsuarioService {
       throw 'Erro ao fazer login: $error';
     }
   }
+
+  Future<String?> excluirUsuario(int id) async {
+    try {
+      var url = Uri.parse('$baseUrl/usuario/$id');
+      final response = await http.delete(
+        url,
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        return 'Usuario Deletado com sucesso';
+      } else {
+        throw 'Erro ao excluir o usuario. Código de status: ${response.statusCode}';
+      }
+    } catch (error) {
+      throw 'Erro ao excluir o usuario: $error';
+    }
+  }
+
+  Future<Usuario> obterUsuarioPorId(int id) async {
+    try {
+      var url = Uri.parse('$baseUrl/usuario/$id');
+      var response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        return Usuario.fromJson(json.decode(response.body));
+      } else {
+        throw Exception('Erro, não foi possível carregar o usuario por ID');
+      }
+    } catch (error) {
+      throw 'Erro ao obter o usuario por ID: $error';
+    }
+  }
+
+  Future<void> editarUsuario(
+      int id, String novoNome, String novoEmail, String novaSenha) async {
+    try {
+      var url = Uri.parse('$baseUrl/usuario/$id');
+      final response = await http.put(
+        url,
+        body: jsonEncode(
+            {'nome': novoNome, 'email': novoEmail, 'senha': novaSenha}),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+      } else {
+        throw 'Erro ao editar o usuario. Código de status: ${response.statusCode}';
+      }
+    } catch (error) {
+      throw 'Erro ao editar o usuario: $error';
+    }
+  }
 }

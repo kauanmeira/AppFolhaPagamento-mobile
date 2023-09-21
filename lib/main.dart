@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       title: 'RH Project',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
+        primarySwatch: Colors.teal,
       ),
       home: LoginPage(),
     );

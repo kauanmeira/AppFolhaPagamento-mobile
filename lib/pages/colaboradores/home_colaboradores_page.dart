@@ -3,6 +3,7 @@ import 'package:app_folha_pagamento/models/Colaboradores.dart';
 import 'package:app_folha_pagamento/models/Colaboradores.dart';
 import 'package:app_folha_pagamento/pages/cargos/cadastro_cargo.dart';
 import 'package:app_folha_pagamento/pages/colaboradores/cadastro_colaborador.dart';
+import 'package:app_folha_pagamento/pages/home_page.dart';
 import 'package:app_folha_pagamento/services/colaborador_service.dart';
 import 'package:app_folha_pagamento/services/usuario_service.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +32,16 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
       appBar: AppBar(
         title: const Text('Colaboradores'),
         backgroundColor: Color(0xFF008584),
+        leading: BackButton(
+          onPressed: () {
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (context) => HomePage(),
+              ),
+              (route) => false,
+            );
+          },
+        ),
       ),
       body: Center(
         child: FutureBuilder<List<Colaboradores>>(

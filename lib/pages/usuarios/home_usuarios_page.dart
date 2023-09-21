@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:app_folha_pagamento/models/Usuario.dart';
 import 'package:app_folha_pagamento/pages/usuarios/cadastro_usuario.dart';
+import 'package:app_folha_pagamento/pages/usuarios/editar_usuario.dart';
 import 'package:app_folha_pagamento/services/usuario_service.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -20,6 +21,67 @@ class _HomeUsuariosPageState extends State<HomeUsuariosPage> {
   void initState() {
     super.initState();
     usuarios = usuarioService.obterUsuarios();
+  }
+
+  Future<void> recarregarDadosUsuarios() async {
+    setState(() {
+      usuarios = usuarioService.obterUsuarios();
+    });
+  }
+
+  Future<void> _confirmarExclusao(Usuario usuario) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Deseja realmente excluir este usuário?'),
+          content: Text('Usuario: ${usuario.email}'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Sim'),
+              onPressed: () async {
+                try {
+                  String? mensagem =
+                      await usuarioService.excluirUsuario(usuario.id!);
+                  if (mensagem != null) {
+                    // Exibe a mensagem de sucesso
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(mensagem),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+
+                    // Fecha o diálogo
+                    Navigator.of(context).pop();
+
+                    // Recarrega os dados após a exclusão
+                    recarregarDadosUsuarios();
+                  }
+                } catch (error) {
+                  // Lida com erros ao excluir
+                  print('Erro ao excluir usuario: $error');
+                  // Exibe uma mensagem de erro se necessário
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Erro ao excluir usuario: $error'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              },
+            ),
+            TextButton(
+              child: Text('Não'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Fecha o diálogo
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -52,11 +114,28 @@ class _HomeUsuariosPageState extends State<HomeUsuariosPage> {
                       children: [
                         IconButton(
                           icon: Icon(Icons.edit),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.of(context)
+                                .push(
+                              MaterialPageRoute(
+                                builder: (context) => EditarUsuario(
+                                  usuarioId: usuario.id!,
+                                  recarregarDadosUsuarios:
+                                      recarregarDadosUsuarios,
+                                ),
+                              ),
+                            )
+                                .then((value) {
+                              // Após a edição, os dados serão recarregados automaticamente
+                            });
+                          },
                         ),
                         IconButton(
                           icon: Icon(Icons.delete, color: Colors.red),
-                          onPressed: () {},
+                          onPressed: () {
+                            _confirmarExclusao(
+                                usuario); // Chame a função de confirmação
+                          },
                         ),
                       ],
                     ),
@@ -80,6 +159,4 @@ class _HomeUsuariosPageState extends State<HomeUsuariosPage> {
       ),
     );
   }
-
-  
 }

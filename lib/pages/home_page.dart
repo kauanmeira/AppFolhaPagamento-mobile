@@ -13,6 +13,7 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Color(0xFF008584),
         title: Text('Bem vindo!'),
+        automaticallyImplyLeading: false,
         actions: [
           PopupMenuButton<String>(
             icon: Icon(Icons.menu),

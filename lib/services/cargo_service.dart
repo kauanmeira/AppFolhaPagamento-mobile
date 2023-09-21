@@ -39,4 +39,57 @@ class CargoService {
       throw Exception('Erro, não foi possível carregar os cargos');
     }
   }
+
+  Future<Cargos> obterCargoPorId(int id) async {
+    try {
+      var url = Uri.parse('$baseUrl/cargos/$id');
+      var response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        return Cargos.fromJson(json.decode(response.body));
+      } else {
+        throw Exception('Erro, não foi possível carregar o cargo por ID');
+      }
+    } catch (error) {
+      throw 'Erro ao obter o cargo por ID: $error';
+    }
+  }
+
+  Future<void> editarCargo(int id, String novoNome) async {
+    try {
+      var url = Uri.parse('$baseUrl/cargos/$id');
+      final response = await http.put(
+        url,
+        body: jsonEncode({'nome': novoNome}),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        // Sucesso ao editar o cargo
+      } else {
+        throw 'Erro ao editar o cargo. Código de status: ${response.statusCode}';
+      }
+    } catch (error) {
+      throw 'Erro ao editar o cargo: $error';
+    }
+  }
+
+  Future<String?> excluirCargo(int id) async {
+    try {
+      var url = Uri.parse('$baseUrl/cargos/$id');
+      final response = await http.delete(
+        url,
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        // Sucesso ao excluir o cargo (status 204 significa "No Content")
+        return 'Cargo Deletado com sucesso';
+      } else {
+        throw 'Erro ao excluir o cargo. Código de status: ${response.statusCode}';
+      }
+    } catch (error) {
+      throw 'Erro ao excluir o cargo: $error';
+    }
+  }
 }

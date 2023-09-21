@@ -1,5 +1,5 @@
-import 'dart:convert';
 import 'dart:io';
+
 import 'package:app_folha_pagamento/pages/home_page.dart';
 import 'package:app_folha_pagamento/pages/reset_password_page.dart';
 import 'package:app_folha_pagamento/pages/usuarios/cadastro_usuario.dart';
@@ -77,106 +77,103 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.all(40),
-          color: Colors.white,
-          child: Column(
-            children: [
-              SizedBox(
-                width: 128,
-                height: 128,
-                child: Image.network(
-                  "https://cdn-icons-png.flaticon.com/512/5348/5348208.png",
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              TextFormField(
-                controller: emailController,
-                autofocus: true,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  labelText: "E-mail",
-                  labelStyle: TextStyle(
-                    color: Colors.black38,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 20,
+      body: Center(
+        child: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.all(20),
+            constraints: BoxConstraints(maxWidth: 400),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 150,
+                  height: 150,
+                  child: Image.network(
+                    "https://cdn-icons-png.flaticon.com/512/5348/5348208.png",
+                    fit: BoxFit.contain,
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              TextFormField(
-                controller: senhaController,
-                keyboardType: TextInputType.text,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: "Senha",
-                  labelStyle: TextStyle(
-                    color: Colors.black38,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-              Container(
-                height: 40,
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  child: Text(
-                    "Recuperar Senha",
-                    textAlign: TextAlign.right,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ResetPasswordPage(),
+                SizedBox(height: 20),
+                TextFormField(
+                  controller: emailController,
+                  autofocus: true,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    labelText: "E-mail",
+                    prefixIcon: Icon(Icons.email),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFF008584), // Cor quando focado
                       ),
-                    );
-                  },
-                ),
-              ),
-              Container(
-                height: 40,
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  child: Text(
-                    "Cadastrar Usuário",
-                    textAlign: TextAlign.right,
+                    ),
                   ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CadastroUsuario(),
+                ),
+                SizedBox(height: 10),
+                TextFormField(
+                  controller: senhaController,
+                  keyboardType: TextInputType.text,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: "Senha",
+                    prefixIcon: Icon(Icons.lock),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFF008584), // Cor quando focado
                       ),
-                    );
-                  },
-                ),
-              ),
-              SizedBox(
-                height: 40,
-              ),
-              Container(
-                height: 60,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    stops: [0.3, 1],
-                    colors: [Color(0xFF008584), Color(0xFF007C70)],
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(5),
+                    ),
                   ),
                 ),
-                child: TextButton(
-                  onPressed: _login,
-                  child: Center(
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        // Implemente a ação para "Esqueceu a Senha" aqui
+                      },
+                      child: Text(
+                        "Esqueceu a Senha?",
+                        style: TextStyle(
+                          color: Color(0xFF008584),
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CadastroUsuario(),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        "Cadastrar Usuário",
+                        style: TextStyle(
+                          color: Color(0xFF008584),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                Container(
+                  height: 60,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      stops: [0.3, 1],
+                      colors: [Color(0xFF008584), Color(0xFF007C70)],
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(5),
+                    ),
+                  ),
+                  child: TextButton(
+                    onPressed: _login,
                     child: Text(
                       "Login",
                       style: TextStyle(
@@ -187,9 +184,9 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-              ),
-              SizedBox(height: 20), // Espaço para a mensagem de feedback
-            ],
+                SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),

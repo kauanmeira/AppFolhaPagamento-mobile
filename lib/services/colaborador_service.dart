@@ -19,7 +19,7 @@ class ColaboradorService {
       int empresaId,
       String cep,
       String logradouro,
-      int numero,
+      String numero,
       String bairro,
       String cidade,
       String estado) async {
@@ -95,6 +95,73 @@ class ColaboradorService {
       }
     } else {
       throw Exception('Erro ao buscar o endereço');
+    }
+  }
+
+  Future<Colaboradores> obterColaboradoresPorId(int id) async {
+    try {
+      var url = Uri.parse('$baseUrl/colaboradores/$id');
+      var response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        return Colaboradores.fromJson(json.decode(response.body));
+      } else {
+        throw Exception('Erro, não foi possível carregar o colaborador por ID');
+      }
+    } catch (error) {
+      throw 'Erro ao obter o colaborador por ID: $error';
+    }
+  }
+
+  Future<void> editarColaborador(
+      int id,
+      String novoCpf,
+      String novoNome,
+      String novoSobrenome,
+      String novoSalarioBase,
+      String novaDataNascimento,
+      String novaDataAdmissao,
+      int novoDependentes,
+      int novoFilhos,
+      int novoCargoId,
+      int novaEmpresaId,
+      String novoCep,
+      String novoLogradouro,
+      String novoNumero,
+      String novoBairro,
+      String novaCidade,
+      String novoEstado) async {
+    try {
+      var url = Uri.parse('$baseUrl/colaboradores/$id');
+      final response = await http.put(
+        url,
+        body: jsonEncode({
+          'cpf': novoCpf,
+          'nome': novoNome,
+          'sobrenome': novoSobrenome,
+          'salarioBase': novoSalarioBase,
+          'dataNascimento': novaDataNascimento,
+          'dataAdmissao': novaDataAdmissao,
+          'dependentes': novoDependentes,
+          'filhos': novoFilhos,
+          'cargoId': novoCargoId,
+          'empresaId': novaEmpresaId,
+          'cep': novoCep,
+          'logradouro': novoLogradouro,
+          'numero': novoNumero,
+          'bairro': novoBairro,
+          'cidade': novaCidade,
+          'estado': novoEstado
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+      } else {
+        throw 'Erro ao editar o colaborador. Código de status: ${response.statusCode}';
+      }
+    } catch (error) {
+      throw 'Erro ao editar o colaborador: $error';
     }
   }
 }

@@ -4,6 +4,7 @@ import 'package:app_folha_pagamento/pages/home_page.dart';
 import 'package:app_folha_pagamento/pages/login_page.dart';
 import 'package:app_folha_pagamento/services/HttpService.dart';
 import 'package:app_folha_pagamento/services/cargo_service.dart';
+import 'package:app_folha_pagamento/services/usuario_service.dart';
 import 'package:flutter/material.dart';
 
 class CadastroCargo extends StatefulWidget {
@@ -17,6 +18,7 @@ class _CadastroCargoState extends State<CadastroCargo> {
   TextEditingController nomeController = TextEditingController();
   String? feedbackMessage;
   final CargoService cargoService = CargoService();
+  final UsuarioService usuarioService = UsuarioService();
 
   @override
   void dispose() {
@@ -34,8 +36,12 @@ class _CadastroCargoState extends State<CadastroCargo> {
     print('Cadastrando...');
     String nome = nomeController.text;
 
+    // Obtenha o token de onde você o gerencia, por exemplo, de uma variável de estado
+    String? token = await usuarioService
+        .getToken(); // Obtenha o token aqui, dependendo de como você o está gerenciando.
+
     try {
-      final cargoCadastrado = await cargoService.cadastrarCargo(nome);
+      final cargoCadastrado = await cargoService.cadastrarCargo(nome, token!);
 
       if (cargoCadastrado != null) {
         print('Cargo Cadastrado! Resposta da API: $cargoCadastrado');

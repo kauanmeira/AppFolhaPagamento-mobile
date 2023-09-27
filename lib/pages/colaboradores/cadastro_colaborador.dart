@@ -7,6 +7,7 @@ import 'package:app_folha_pagamento/services/HttpService.dart';
 import 'package:app_folha_pagamento/services/cargo_service.dart';
 import 'package:app_folha_pagamento/services/colaborador_service.dart';
 import 'package:app_folha_pagamento/services/empresa_service.dart';
+import 'package:app_folha_pagamento/services/usuario_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -44,6 +45,7 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
   final ColaboradorService colaboradorService = ColaboradorService();
   final CargoService cargoService = CargoService();
   final EmpresaService empresaService = EmpresaService();
+  final UsuarioService usuarioService = UsuarioService();
   DateFormat inputDateFormat = DateFormat('dd/MM/yyyy');
   DateFormat displayDateFormat = DateFormat('dd/MM/yyyy');
   DateFormat jsonDateFormat = DateFormat('yyyy-MM-dd');
@@ -79,13 +81,16 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
   }
 
   Future<void> _carregarCargos() async {
+    String? token = await usuarioService
+        .getToken(); // Obtenha o token aqui, dependendo de como você o está gerenciando.
+
     try {
-      final cargos = await cargoService.obterCargos();
+      final cargos = await cargoService.obterCargos(token!);
       setState(() {
         cargosList = cargos;
       });
     } catch (error) {
-      print('Erro ao carregar os cargos: $error');
+      print('Erro ao carregar cargos: $error');
     }
   }
 
@@ -139,11 +144,10 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
     int dependentes = int.tryParse(dependentesController.text) ?? 0;
     int filhos = int.tryParse(filhosController.text) ?? 0;
     int cargoId = selectedCargoId ?? 0;
-    int empresaId = int.tryParse(empresaIdController.text) ?? 0;
+    int empresaId = selectedEmpresaId ?? 0;
     String cep = cepController.text;
     String logradouro = logradouroController.text;
-    int numero = int.tryParse(numeroController.text) ??
-        0; // Modifiquei para ser uma String
+    String numero = numeroController.text;
     String bairro = bairroController.text;
     String cidade = cidadeController.text;
     String estado = estadoController.text;

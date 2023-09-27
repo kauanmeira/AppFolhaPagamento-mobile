@@ -1,5 +1,6 @@
 import 'package:app_folha_pagamento/pages/cargos/home_cargos_page.dart';
 import 'package:app_folha_pagamento/pages/colaboradores/home_colaboradores_page.dart';
+import 'package:app_folha_pagamento/pages/holerites/home_holerites_page.dart';
 import 'package:app_folha_pagamento/pages/login_page.dart';
 import 'package:app_folha_pagamento/pages/usuarios/home_usuarios_page.dart';
 import 'package:flutter/material.dart';
@@ -13,31 +14,41 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Color(0xFF008584),
         title: Text('Bem vindo!'),
-        automaticallyImplyLeading: false,
         actions: [
-          PopupMenuButton<String>(
-            icon: Icon(Icons.menu),
-            onSelected: (value) {
-              if (value == 'sair') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LoginPage(),
-                  ),
-                );
-              } else if (value == 'informacoes') {}
-            },
-            itemBuilder: (BuildContext context) {
-              return [
-                PopupMenuItem<String>(
-                  value: 'sair',
-                  child: Text('Sair'),
-                ),
-                PopupMenuItem<String>(
-                  value: 'informacoes',
-                  child: Text('Informações'),
-                ),
-              ];
+          IconButton(
+            icon: Icon(Icons.exit_to_app),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Deseja realmente sair?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          // Feche o diálogo
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('Não'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          // Feche o diálogo
+                          Navigator.of(context).pop();
+                          // Redirecione para a página de login
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginPage(),
+                            ),
+                          );
+                        },
+                        child: Text('Sim'),
+                      ),
+                    ],
+                  );
+                },
+              );
             },
           ),
         ],
@@ -168,7 +179,14 @@ class HomePage extends StatelessWidget {
               SizedBox(height: 30),
               InkWell(
                 onTap: () {
-                  // Adicione a ação desejada aqui
+                  {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomeHoleritesPage(),
+                      ),
+                    );
+                  }
                 },
                 child: Container(
                   height: 70,

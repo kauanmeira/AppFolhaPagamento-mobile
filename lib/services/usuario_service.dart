@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'package:app_folha_pagamento/models/Usuario.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UsuarioService {
   final String baseUrl = 'https://192.168.0.240:7256/api';
 
   Future<void> cadastrarUsuario(String nome, String email, String senha) async {
     try {
+      final token = await getToken();
       final response = await http.post(
         Uri.parse('$baseUrl/usuario'),
         body: jsonEncode({
@@ -14,7 +16,10 @@ class UsuarioService {
           'email': email,
           'senha': senha,
         }),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
       );
 
       if (response.statusCode == 200) {
@@ -34,7 +39,15 @@ class UsuarioService {
 
   Future<List<Usuario>> obterUsuarios() async {
     var url = Uri.parse('$baseUrl/usuario');
-    var response = await http.get(url);
+    final token = await getToken(); // Obtenha o token do SharedPreferences
+
+    var response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token', // Adicione o token ao cabeçalho
+      },
+    );
 
     if (response.statusCode == 200) {
       List listaUsuarios = json.decode(response.body);
@@ -44,7 +57,12 @@ class UsuarioService {
     }
   }
 
-  Future<Map<String, dynamic>> login(String email, String senha) async {
+  Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
+  }
+
+  Future<String?> login(String email, String senha) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/login'),
@@ -59,7 +77,13 @@ class UsuarioService {
 
       if (response.statusCode == 200) {
         final usuarioJson = json.decode(response.body);
-        return usuarioJson;
+        final token = usuarioJson['token'];
+
+        // Armazene o token no SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', token);
+
+        return token; // Retorne o token
       } else if (response.statusCode == 401) {
         final jsonResponse = json.decode(response.body);
         final errorMessage = jsonResponse['message'];

@@ -1,7 +1,14 @@
-import 'package:app_folha_pagamento/services/colaborador_service.dart';
-import 'package:flutter/material.dart';
+import 'dart:convert';
+
+import 'package:app_folha_pagamento/models/Cargos.dart';
+import 'package:app_folha_pagamento/models/Empresas.dart';
 import 'package:app_folha_pagamento/services/cargo_service.dart';
-/*
+import 'package:app_folha_pagamento/services/colaborador_service.dart';
+import 'package:app_folha_pagamento/services/empresa_service.dart';
+import 'package:app_folha_pagamento/services/usuario_service.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
 class EditarColaborador extends StatefulWidget {
   final int colaboradorId;
   final void Function() recarregarDadosColaborador;
@@ -17,13 +24,55 @@ class EditarColaborador extends StatefulWidget {
 }
 
 class _EditarColaboradorState extends State<EditarColaborador> {
+  TextEditingController cpfController = TextEditingController();
   TextEditingController nomeController = TextEditingController();
+  TextEditingController sobrenomeController = TextEditingController();
+  TextEditingController salarioBaseController = TextEditingController();
+  TextEditingController dataNascimentoController = TextEditingController();
+  TextEditingController dataAdmissaoController = TextEditingController();
+  TextEditingController dependentesController = TextEditingController();
+  TextEditingController filhosController = TextEditingController();
+  TextEditingController empresaIdController = TextEditingController();
+  TextEditingController cepController = TextEditingController();
+  TextEditingController logradouroController = TextEditingController();
+  TextEditingController numeroController = TextEditingController();
+  TextEditingController bairroController = TextEditingController();
+  TextEditingController cidadeController = TextEditingController();
+  TextEditingController estadoController = TextEditingController();
+  int? cargoVinculado;
+  int? empresaVinculada;
+
+  List<Cargos> cargosList = [];
+  List<Empresas> empresaList = [];
+
+  int? selectedCargoId;
+  int? selectedEmpresaId;
+
   String? feedbackMessage;
   final ColaboradorService colaboradorService = ColaboradorService();
+  final CargoService cargoService = CargoService();
+  final EmpresaService empresaService = EmpresaService();
+  final UsuarioService usuarioService = UsuarioService();
+  DateFormat jsonDateFormat = DateFormat('yyyy-MM-dd');
+  DateFormat inputDateFormat = DateFormat('dd/MM/yyyy');
 
   @override
   void dispose() {
+    cpfController.dispose();
     nomeController.dispose();
+    sobrenomeController.dispose();
+    salarioBaseController.dispose();
+    dataNascimentoController.dispose();
+    dataAdmissaoController.dispose();
+    dependentesController.dispose();
+    filhosController.dispose();
+    empresaIdController.dispose();
+    cepController.dispose();
+    logradouroController.dispose();
+    numeroController.dispose();
+    bairroController.dispose();
+    cidadeController.dispose();
+    estadoController.dispose();
     super.dispose();
   }
 
@@ -31,18 +80,86 @@ class _EditarColaboradorState extends State<EditarColaborador> {
   void initState() {
     super.initState();
 
-    // Carregue os detalhes do cargo para edição
     _carregarDetalhesColaborador();
+    _carregarCargos();
+    _carregarEmpresas();
+    selectedCargoId = cargosList.isNotEmpty ? cargosList[0].id : null;
+    selectedEmpresaId = empresaList.isNotEmpty ? empresaList[0].id : null;
   }
 
   Future<void> _editar() async {
+    String novoCpf = cpfController.text;
     String novoNome = nomeController.text;
+    String novoSobrenome = sobrenomeController.text;
+    String novoSalarioBase = salarioBaseController.text;
+
+    DateTime novaDataNascimento =
+        inputDateFormat.parse(dataNascimentoController.text);
+    DateTime novaDataAdmissao =
+        inputDateFormat.parse(dataAdmissaoController.text);
+
+    // Converter as datas para o formato "yyyy-MM-dd" para o JSON
+    String dataNascimentoFormatted = jsonDateFormat.format(novaDataNascimento);
+    String dataAdmissaoFormatted = jsonDateFormat.format(novaDataAdmissao);
+
+    int novoDependentes = int.tryParse(dependentesController.text) ?? 0;
+    int novoFilhos = int.tryParse(filhosController.text) ?? 0;
+    int novoCargoId = selectedCargoId ?? 0;
+    int novaEmpresaId = selectedEmpresaId ?? 0;
+    String novoCep = cepController.text;
+    String novoLogradouro = logradouroController.text;
+    String novoNumero = numeroController.text;
+    String novoBairro = bairroController.text;
+    String novaCidade = cidadeController.text;
+    String novoEstado = estadoController.text;
+
+    Map<String, dynamic> dadosColaborador = {
+      "cpf": novoCpf,
+      "nome": novoNome,
+      "sobrenome": novoSobrenome,
+      "salarioBase": novoSalarioBase,
+      "dataNascimento": dataNascimentoFormatted,
+      "dataAdmissao": dataAdmissaoFormatted,
+      "dependentes": novoDependentes,
+      "filhos": novoFilhos,
+      "cargoId": novoCargoId,
+      "empresaId": novaEmpresaId,
+      "cep": novoCep,
+      "logradouro": novoLogradouro,
+      "numero": novoNumero,
+      "bairro": novoBairro,
+      "cidade": novaCidade,
+      "estado": novoEstado,
+    };
+
+    String jsonDadosColaborador = jsonEncode(dadosColaborador);
+
+    print('Dados do Colaborador (JSON):');
+    print(jsonDadosColaborador);
 
     try {
-      await colaboradorService.editarColaborador(widget.colaboradorId, novoNome);
+      await colaboradorService.editarColaborador(
+        widget.colaboradorId,
+        novoCpf,
+        novoNome,
+        novoSobrenome,
+        novoSalarioBase,
+        dataNascimentoFormatted, // Use as datas formatadas aqui
+        dataAdmissaoFormatted,
+        novoDependentes,
+        novoFilhos,
+        novoCargoId,
+        novaEmpresaId,
+        novoCep,
+        novoLogradouro,
+        novoNumero,
+        novoBairro,
+        novaCidade,
+        novoEstado,
+      );
 
       setState(() {
-        feedbackMessage = 'colaborador Editado com Sucesso';
+        feedbackMessage = 'Colaborador Editado com Sucesso';
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -75,13 +192,106 @@ class _EditarColaboradorState extends State<EditarColaborador> {
     }
   }
 
-  Future<void> _carregarDetalhesCargo() async {
+  Future<void> _buscarEnderecoPorCEP(String cep) async {
     try {
-      final colaborador = await colaboradorService.obterColaboradorPorId(widget.colaboradorId);
-      nomeController.text = colaborador.nome!;
+      final endereco = await colaboradorService.consultarCEP(cep);
+
+      if (endereco.containsKey('error')) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(endereco['error']),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } else {
+        setState(() {
+          logradouroController.text = endereco['logradouro'];
+          bairroController.text = endereco['bairro'];
+          cidadeController.text = endereco['cidade'];
+          estadoController.text = endereco['estado'];
+        });
+      }
     } catch (error) {
-      print('Erro ao carregar detalhes do colaborador: $error');
-      // Lidar com o erro, por exemplo, exibir uma mensagem ao usuário.
+      print('Erro ao buscar o endereço: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao buscar o endereço'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _carregarCargos() async {
+    String? token = await usuarioService
+        .getToken(); // Obtenha o token aqui, dependendo de como você o está gerenciando.
+
+    try {
+      final cargos = await cargoService.obterCargos(token!);
+      setState(() {
+        cargosList = cargos;
+      });
+    } catch (error) {
+      print('Erro ao carregar cargos: $error');
+    }
+  }
+
+  Future<void> _carregarEmpresas() async {
+    try {
+      final empresas = await empresaService
+          .obterEmpresas(); // Substitua pelo método correto para obter as empresas
+      setState(() {
+        empresaList = empresas;
+      });
+    } catch (error) {
+      print('Erro ao carregar empresas: $error');
+    }
+  }
+
+  Future<void> _carregarDetalhesColaborador() async {
+    try {
+      final colaborador = await colaboradorService
+          .obterColaboradoresPorId(widget.colaboradorId);
+
+      // Atribuir os detalhes do colaborador aos campos do formulário
+      cpfController.text = colaborador.cpf!;
+      nomeController.text = colaborador.nome!;
+      sobrenomeController.text = colaborador.sobrenome!;
+      salarioBaseController.text = colaborador.salarioBase.toString();
+
+      DateTime dataNascimento = DateTime.parse(colaborador.dataNascimento!);
+      DateTime dataAdmissao = DateTime.parse(colaborador.dataAdmissao!);
+
+      dataNascimentoController.text =
+          DateFormat('dd/MM/yyyy').format(dataNascimento);
+      dataAdmissaoController.text =
+          DateFormat('dd/MM/yyyy').format(dataAdmissao);
+
+      dependentesController.text = colaborador.dependentes.toString();
+      filhosController.text = colaborador.filhos.toString();
+
+      cargoVinculado = colaborador.cargoId;
+      empresaVinculada = colaborador.empresaId;
+
+      cepController.text = colaborador.cep!;
+      logradouroController.text = colaborador.logradouro!;
+      numeroController.text = colaborador.numero.toString();
+      bairroController.text = colaborador.bairro!;
+      cidadeController.text = colaborador.cidade!;
+      estadoController.text = colaborador.estado!;
+
+      // Define as opções selecionadas nos campos de seleção
+      setState(() {
+        selectedCargoId = cargoVinculado;
+        selectedEmpresaId = empresaVinculada;
+      });
+    } catch (error) {
+      if (error is Exception) {
+        print('Erro ao carregar detalhes do colaborador: $error');
+        // Lidar com a exceção de maneira específica, se necessário
+      } else {
+        // Lidar com outras exceções, se necessário
+      }
     }
   }
 
@@ -105,10 +315,245 @@ class _EditarColaboradorState extends State<EditarColaborador> {
           children: [
             SizedBox(height: 20),
             TextFormField(
+              keyboardType: TextInputType.number,
+              controller: cpfController,
+              decoration: InputDecoration(
+                labelText: "CPF",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            TextFormField(
               keyboardType: TextInputType.name,
               controller: nomeController,
               decoration: InputDecoration(
                 labelText: "Nome",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            TextFormField(
+              keyboardType: TextInputType.name,
+              controller: sobrenomeController,
+              decoration: InputDecoration(
+                labelText: "Sobrenome",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            TextFormField(
+              keyboardType: TextInputType.number,
+              controller: salarioBaseController,
+              decoration: InputDecoration(
+                labelText: "Salário Base",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            TextFormField(
+              keyboardType: TextInputType.number,
+              controller: dataNascimentoController,
+              decoration: InputDecoration(
+                labelText: "Data de Nascimento",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            TextFormField(
+              keyboardType: TextInputType.number,
+              controller: dataAdmissaoController,
+              decoration: InputDecoration(
+                labelText: "Data de Admissão",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            TextFormField(
+              keyboardType: TextInputType.number,
+              controller: dependentesController,
+              decoration: InputDecoration(
+                labelText: "Dependentes",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            TextFormField(
+              keyboardType: TextInputType.number,
+              controller: filhosController,
+              decoration: InputDecoration(
+                labelText: "Filhos",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+            DropdownButtonFormField<int>(
+              value: cargosList.isNotEmpty ? selectedCargoId : null,
+              onChanged: (int? cargoId) {
+                setState(() {
+                  selectedCargoId = cargoId;
+                });
+              },
+              items: [
+                if (cargosList.isEmpty)
+                  DropdownMenuItem<int>(
+                    value: null,
+                    child: Text("Nenhum cargo disponível"),
+                  )
+                else
+                  ...cargosList.map((Cargos cargo) {
+                    return DropdownMenuItem<int>(
+                      value: cargo.id,
+                      child: Text(cargo.nome!),
+                    );
+                  }).toList(),
+              ],
+              decoration: InputDecoration(
+                labelText: "Cargo",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+            DropdownButtonFormField<int>(
+              value: empresaList.isNotEmpty ? selectedEmpresaId : null,
+              onChanged: (int? empresaId) {
+                setState(() {
+                  selectedEmpresaId = empresaId;
+                });
+              },
+              items: [
+                if (empresaList.isEmpty)
+                  DropdownMenuItem<int>(
+                    value: null,
+                    child: Text("Nenhuma empresa disponível"),
+                  )
+                else
+                  ...empresaList.map((Empresas empresa) {
+                    return DropdownMenuItem<int>(
+                      value: empresa.id,
+                      child: Text(empresa.nomeFantasia!),
+                    );
+                  }).toList(),
+              ],
+              decoration: InputDecoration(
+                labelText: "Empresa",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            TextFormField(
+              keyboardType: TextInputType.number,
+              controller: cepController,
+              decoration: InputDecoration(
+                labelText: "CEP",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
+              onChanged: (cep) {
+                if (cep.length == 8) {
+                  // Chama a função de busca de endereço quando o CEP tiver 8 dígitos
+                  _buscarEnderecoPorCEP(cep);
+                }
+              },
+            ),
+            SizedBox(height: 10),
+            TextFormField(
+              keyboardType: TextInputType.text,
+              controller: logradouroController,
+              decoration: InputDecoration(
+                labelText: "Logradouro",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            TextFormField(
+              keyboardType: TextInputType.text,
+              controller: numeroController,
+              decoration: InputDecoration(
+                labelText: "Número",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            TextFormField(
+              keyboardType: TextInputType.text,
+              controller: bairroController,
+              decoration: InputDecoration(
+                labelText: "Bairro",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            TextFormField(
+              keyboardType: TextInputType.text,
+              controller: cidadeController,
+              decoration: InputDecoration(
+                labelText: "Cidade",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            TextFormField(
+              keyboardType: TextInputType.text,
+              controller: estadoController,
+              decoration: InputDecoration(
+                labelText: "Estado",
                 labelStyle: TextStyle(
                   color: Colors.black38,
                   fontWeight: FontWeight.w400,
@@ -149,4 +594,3 @@ class _EditarColaboradorState extends State<EditarColaborador> {
     );
   }
 }
-*/

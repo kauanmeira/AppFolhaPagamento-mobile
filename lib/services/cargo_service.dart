@@ -1,16 +1,22 @@
 import 'dart:convert';
 import 'package:app_folha_pagamento/models/Cargos.dart';
+import 'package:app_folha_pagamento/services/usuario_service.dart';
 import 'package:http/http.dart' as http;
 
 class CargoService {
   final String baseUrl = 'https://192.168.0.240:7256/api';
+  final UsuarioService usuarioService = new UsuarioService();
 
-  Future<Map<String, dynamic>?> cadastrarCargo(String nome) async {
+  Future<Map<String, dynamic>?> cadastrarCargo(
+      String nome, String token) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/cargos'),
         body: jsonEncode({'nome': nome}),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
       );
 
       if (response.statusCode == 201) {
@@ -28,9 +34,15 @@ class CargoService {
     }
   }
 
-  Future<List<Cargos>> obterCargos() async {
+  Future<List<Cargos>> obterCargos(String token) async {
     var url = Uri.parse('$baseUrl/cargos');
-    var response = await http.get(url);
+    var response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
 
     if (response.statusCode == 200) {
       List listaCargos = json.decode(response.body);

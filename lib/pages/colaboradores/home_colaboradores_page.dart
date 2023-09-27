@@ -3,6 +3,8 @@ import 'package:app_folha_pagamento/models/Colaboradores.dart';
 import 'package:app_folha_pagamento/models/Colaboradores.dart';
 import 'package:app_folha_pagamento/pages/cargos/cadastro_cargo.dart';
 import 'package:app_folha_pagamento/pages/colaboradores/cadastro_colaborador.dart';
+import 'package:app_folha_pagamento/pages/colaboradores/detalhes_colaborador_page.dart';
+import 'package:app_folha_pagamento/pages/colaboradores/editar_colaborador.dart';
 import 'package:app_folha_pagamento/pages/home_page.dart';
 import 'package:app_folha_pagamento/services/colaborador_service.dart';
 import 'package:app_folha_pagamento/services/usuario_service.dart';
@@ -24,6 +26,12 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
   void initState() {
     super.initState();
     colaboradores = colaboradorService.obterColaboradores();
+  }
+
+  Future<void> recarregarDadosColaborador() async {
+    setState(() {
+      colaboradores = colaboradorService.obterColaboradores();
+    });
   }
 
   @override
@@ -67,7 +75,19 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
                         IconButton(
                           icon: Icon(Icons.edit),
                           onPressed: () {
-                            // Coloque aqui a lógica para edição
+                            Navigator.of(context)
+                                .push(
+                              MaterialPageRoute(
+                                builder: (context) => EditarColaborador(
+                                  colaboradorId: colaborador.id!,
+                                  recarregarDadosColaborador:
+                                      recarregarDadosColaborador,
+                                ),
+                              ),
+                            )
+                                .then((value) {
+                              // Após a edição, os dados serão recarregados automaticamente
+                            });
                           },
                         ),
                         IconButton(
@@ -78,6 +98,15 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
                         ),
                       ],
                     ),
+                    onTap: () {
+                      // Navegue para a tela de detalhes do colaborador
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              DetalhesColaboradorPage(colaborador: colaborador),
+                        ),
+                      );
+                    },
                   );
                 },
               );

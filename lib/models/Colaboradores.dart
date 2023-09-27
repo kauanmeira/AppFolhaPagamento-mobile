@@ -12,7 +12,7 @@ class Colaboradores {
   int? empresaId;
   String? cep;
   String? logradouro;
-  int? numero;
+  String? numero;
   String? bairro;
   String? cidade;
   String? estado;

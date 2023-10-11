@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:app_folha_pagamento/models/Cargos.dart';
 import 'package:app_folha_pagamento/models/Empresas.dart';
+import 'package:app_folha_pagamento/services/auth_middleware.dart';
 import 'package:app_folha_pagamento/services/cargo_service.dart';
 import 'package:app_folha_pagamento/services/colaborador_service.dart';
 import 'package:app_folha_pagamento/services/empresa_service.dart';
@@ -53,6 +54,8 @@ class _EditarColaboradorState extends State<EditarColaborador> {
   final CargoService cargoService = CargoService();
   final EmpresaService empresaService = EmpresaService();
   final UsuarioService usuarioService = UsuarioService();
+  final AuthMiddleware authMiddleware = AuthMiddleware();
+
   DateFormat jsonDateFormat = DateFormat('yyyy-MM-dd');
   DateFormat inputDateFormat = DateFormat('dd/MM/yyyy');
 
@@ -79,12 +82,12 @@ class _EditarColaboradorState extends State<EditarColaborador> {
   @override
   void initState() {
     super.initState();
-
     _carregarDetalhesColaborador();
     _carregarCargos();
     _carregarEmpresas();
     selectedCargoId = cargosList.isNotEmpty ? cargosList[0].id : null;
     selectedEmpresaId = empresaList.isNotEmpty ? empresaList[0].id : null;
+    authMiddleware.checkAuthAndNavigate(context);
   }
 
   Future<void> _editar() async {
@@ -112,6 +115,7 @@ class _EditarColaboradorState extends State<EditarColaborador> {
     String novoBairro = bairroController.text;
     String novaCidade = cidadeController.text;
     String novoEstado = estadoController.text;
+    String? token = await usuarioService.getToken();
 
     Map<String, dynamic> dadosColaborador = {
       "cpf": novoCpf,
@@ -139,24 +143,24 @@ class _EditarColaboradorState extends State<EditarColaborador> {
 
     try {
       await colaboradorService.editarColaborador(
-        widget.colaboradorId,
-        novoCpf,
-        novoNome,
-        novoSobrenome,
-        novoSalarioBase,
-        dataNascimentoFormatted, // Use as datas formatadas aqui
-        dataAdmissaoFormatted,
-        novoDependentes,
-        novoFilhos,
-        novoCargoId,
-        novaEmpresaId,
-        novoCep,
-        novoLogradouro,
-        novoNumero,
-        novoBairro,
-        novaCidade,
-        novoEstado,
-      );
+          widget.colaboradorId,
+          novoCpf,
+          novoNome,
+          novoSobrenome,
+          novoSalarioBase,
+          dataNascimentoFormatted, // Use as datas formatadas aqui
+          dataAdmissaoFormatted,
+          novoDependentes,
+          novoFilhos,
+          novoCargoId,
+          novaEmpresaId,
+          novoCep,
+          novoLogradouro,
+          novoNumero,
+          novoBairro,
+          novaCidade,
+          novoEstado,
+          token!);
 
       setState(() {
         feedbackMessage = 'Colaborador Editado com Sucesso';
@@ -237,9 +241,9 @@ class _EditarColaboradorState extends State<EditarColaborador> {
   }
 
   Future<void> _carregarEmpresas() async {
+    String? token = await usuarioService.getToken();
     try {
-      final empresas = await empresaService
-          .obterEmpresas(); // Substitua pelo método correto para obter as empresas
+      final empresas = await empresaService.obterEmpresas(token!);
       setState(() {
         empresaList = empresas;
       });
@@ -250,48 +254,36 @@ class _EditarColaboradorState extends State<EditarColaborador> {
 
   Future<void> _carregarDetalhesColaborador() async {
     try {
-      final colaborador = await colaboradorService
-          .obterColaboradoresPorId(widget.colaboradorId);
+      String? token = await usuarioService.getToken();
+      final colaborador = await colaboradorService.obterColaboradoresPorId(
+        widget.colaboradorId,
+        token!, // Passando o token aqui
+      );
 
-      // Atribuir os detalhes do colaborador aos campos do formulário
-      cpfController.text = colaborador.cpf!;
-      nomeController.text = colaborador.nome!;
-      sobrenomeController.text = colaborador.sobrenome!;
-      salarioBaseController.text = colaborador.salarioBase.toString();
-
-      DateTime dataNascimento = DateTime.parse(colaborador.dataNascimento!);
-      DateTime dataAdmissao = DateTime.parse(colaborador.dataAdmissao!);
-
-      dataNascimentoController.text =
-          DateFormat('dd/MM/yyyy').format(dataNascimento);
-      dataAdmissaoController.text =
-          DateFormat('dd/MM/yyyy').format(dataAdmissao);
-
-      dependentesController.text = colaborador.dependentes.toString();
-      filhosController.text = colaborador.filhos.toString();
-
-      cargoVinculado = colaborador.cargoId;
-      empresaVinculada = colaborador.empresaId;
-
-      cepController.text = colaborador.cep!;
-      logradouroController.text = colaborador.logradouro!;
-      numeroController.text = colaborador.numero.toString();
-      bairroController.text = colaborador.bairro!;
-      cidadeController.text = colaborador.cidade!;
-      estadoController.text = colaborador.estado!;
-
-      // Define as opções selecionadas nos campos de seleção
       setState(() {
-        selectedCargoId = cargoVinculado;
-        selectedEmpresaId = empresaVinculada;
+        cpfController.text = colaborador.cpf ?? '';
+        nomeController.text = colaborador.nome ?? '';
+        sobrenomeController.text = colaborador.sobrenome ?? '';
+        salarioBaseController.text = colaborador.salarioBase?.toString() ?? '';
+        dataNascimentoController.text = DateFormat('dd/MM/yyyy')
+            .format(DateTime.parse(colaborador.dataNascimento ?? ''));
+        dataAdmissaoController.text = DateFormat('dd/MM/yyyy')
+            .format(DateTime.parse(colaborador.dataAdmissao ?? ''));
+        dependentesController.text = colaborador.dependentes?.toString() ?? '';
+        filhosController.text = colaborador.filhos?.toString() ?? '';
+        selectedCargoId = colaborador.cargoId;
+        selectedEmpresaId = colaborador.empresaId;
+        cepController.text = colaborador.cep ?? '';
+        logradouroController.text = colaborador.logradouro ?? '';
+        numeroController.text = colaborador.numero?.toString() ?? '';
+        bairroController.text = colaborador.bairro ?? '';
+        cidadeController.text = colaborador.cidade ?? '';
+        estadoController.text = colaborador.estado ?? '';
       });
     } catch (error) {
       if (error is Exception) {
         print('Erro ao carregar detalhes do colaborador: $error');
-        // Lidar com a exceção de maneira específica, se necessário
-      } else {
-        // Lidar com outras exceções, se necessário
-      }
+      } else {}
     }
   }
 

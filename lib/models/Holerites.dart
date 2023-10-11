@@ -1,4 +1,4 @@
-import 'dart:convert';
+// ignore_for_file: file_names
 
 class Holerites {
   int? id;
@@ -29,14 +29,14 @@ class Holerites {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['colaboradorId'] = this.colaboradorId;
-    data['mes'] = this.mes;
-    data['ano'] = this.ano;
-    data['horasNormais'] = this.horasNormais;
-    data['horasExtras'] = this.horasExtras;
-    data['tipo'] = this.tipo;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['colaboradorId'] = colaboradorId;
+    data['mes'] = mes;
+    data['ano'] = ano;
+    data['horasNormais'] = horasNormais;
+    data['horasExtras'] = horasExtras;
+    data['tipo'] = tipo;
 
     return data;
   }

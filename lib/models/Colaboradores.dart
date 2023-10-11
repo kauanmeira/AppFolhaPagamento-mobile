@@ -6,6 +6,8 @@ class Colaboradores {
   int? salarioBase;
   String? dataNascimento;
   String? dataAdmissao;
+  String? dataDemissao;
+  bool? ativo;
   int? dependentes;
   int? filhos;
   int? cargoId;
@@ -25,6 +27,8 @@ class Colaboradores {
       this.salarioBase,
       this.dataNascimento,
       this.dataAdmissao,
+      this.dataDemissao,
+      this.ativo,
       this.dependentes,
       this.filhos,
       this.cargoId,
@@ -44,6 +48,8 @@ class Colaboradores {
     salarioBase = json['salarioBase'];
     dataNascimento = json['dataNascimento'];
     dataAdmissao = json['dataAdmissao'];
+    dataDemissao = json['dataDemissao'];
+    ativo = json['ativo'];
     dependentes = json['dependentes'];
     filhos = json['filhos'];
     cargoId = json['cargoId'];
@@ -65,6 +71,8 @@ class Colaboradores {
     data['salarioBase'] = this.salarioBase;
     data['dataNascimento'] = this.dataNascimento;
     data['dataAdmissao'] = this.dataAdmissao;
+    data['dataDemissao'] = this.dataDemissao;
+    data['ativo'] = this.ativo;
     data['dependentes'] = this.dependentes;
     data['filhos'] = this.filhos;
     data['cargoId'] = this.cargoId;

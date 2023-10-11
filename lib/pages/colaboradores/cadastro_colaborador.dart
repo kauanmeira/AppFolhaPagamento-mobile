@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:app_folha_pagamento/models/Cargos.dart';
 import 'package:app_folha_pagamento/models/Empresas.dart';
 import 'package:app_folha_pagamento/pages/colaboradores/home_colaboradores_page.dart';
+import 'package:app_folha_pagamento/pages/login_page.dart';
 import 'package:app_folha_pagamento/services/HttpService.dart';
+import 'package:app_folha_pagamento/services/auth_middleware.dart';
 import 'package:app_folha_pagamento/services/cargo_service.dart';
 import 'package:app_folha_pagamento/services/colaborador_service.dart';
 import 'package:app_folha_pagamento/services/empresa_service.dart';
@@ -46,6 +48,8 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
   final CargoService cargoService = CargoService();
   final EmpresaService empresaService = EmpresaService();
   final UsuarioService usuarioService = UsuarioService();
+  final AuthMiddleware authMiddleware = AuthMiddleware();
+
   DateFormat inputDateFormat = DateFormat('dd/MM/yyyy');
   DateFormat displayDateFormat = DateFormat('dd/MM/yyyy');
   DateFormat jsonDateFormat = DateFormat('yyyy-MM-dd');
@@ -68,16 +72,41 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
     bairroController.dispose();
     cidadeController.dispose();
     estadoController.dispose();
+
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
+    authMiddleware.checkAuthAndNavigate(context);
     HttpOverrides.global = HttpService();
     _carregarCargos();
     _carregarEmpresas();
     selectedCargoId = null;
+    dataNascimentoController.addListener(() {
+      formatDateField(dataNascimentoController);
+    });
+
+    dataAdmissaoController.addListener(() {
+      formatDateField(dataAdmissaoController);
+    });
+  }
+
+  void formatDateField(TextEditingController controller) {
+    final String text = controller.text;
+
+    if (text.length == 2 && !text.contains('/')) {
+      controller.text = '$text/';
+      controller.selection = TextSelection.fromPosition(
+        TextPosition(offset: controller.text.length),
+      );
+    } else if (text.length == 5 && !text.endsWith('/')) {
+      controller.text = '$text/';
+      controller.selection = TextSelection.fromPosition(
+        TextPosition(offset: controller.text.length),
+      );
+    }
   }
 
   Future<void> _carregarCargos() async {
@@ -95,8 +124,9 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
   }
 
   Future<void> _carregarEmpresas() async {
+    String? token = await usuarioService.getToken();
     try {
-      final empresas = await empresaService.obterEmpresas();
+      final empresas = await empresaService.obterEmpresas(token!);
       setState(() {
         empresaList = empresas;
       });
@@ -151,26 +181,28 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
     String bairro = bairroController.text;
     String cidade = cidadeController.text;
     String estado = estadoController.text;
+
+    String? token = await usuarioService.getToken();
     try {
       final feedbackMessageResult =
           await colaboradorService.cadastrarColaborador(
-        cpf,
-        nome,
-        sobrenome,
-        salarioBase,
-        dataNascimentoFormatted,
-        dataAdmissaoFormatted,
-        dependentes,
-        filhos,
-        cargoId,
-        empresaId,
-        cep,
-        logradouro,
-        numero,
-        bairro,
-        cidade,
-        estado,
-      );
+              cpf,
+              nome,
+              sobrenome,
+              salarioBase,
+              dataNascimentoFormatted,
+              dataAdmissaoFormatted,
+              dependentes,
+              filhos,
+              cargoId,
+              empresaId,
+              cep,
+              logradouro,
+              numero,
+              bairro,
+              cidade,
+              estado,
+              token!);
 
       setState(() {
         feedbackMessage = feedbackMessageResult;
@@ -246,7 +278,34 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
     return text[0].toUpperCase() + text.substring(1);
   }
 
+  // Função para verificar o token e redirecionar para a tela de login se estiver expirado
+  Future<void> _checkTokenAndRedirect(BuildContext context) async {
+    final token = await usuarioService.getToken();
+
+    if (token != null && !usuarioService.isTokenExpired(token)) {
+      // Token válido, não é necessário fazer nada
+    } else {
+      // Token expirado ou ausente, exiba uma mensagem e redirecione para a tela de login
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Sua sessão expirou, faça login novamente.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+
+      // Redirecionar para a tela de login
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LoginPage(),
+        ),
+      );
+    }
+  }
+
   Widget build(BuildContext context) {
+    _checkTokenAndRedirect(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cadastro de colaborador'),

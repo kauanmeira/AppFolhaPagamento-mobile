@@ -1,20 +1,25 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:app_folha_pagamento/models/Usuario.dart';
 import 'package:http/http.dart' as http;
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
 
 class UsuarioService {
   final String baseUrl = 'https://192.168.0.240:7256/api';
 
-  Future<void> cadastrarUsuario(String nome, String email, String senha) async {
+  Future<void> cadastrarUsuario(String nome, String email, String senha,
+      String token, int permissaoId) async {
     try {
-      final token = await getToken();
       final response = await http.post(
         Uri.parse('$baseUrl/usuario'),
         body: jsonEncode({
           'nome': nome,
           'email': email,
           'senha': senha,
+          'permissaoId': permissaoId,
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -96,12 +101,15 @@ class UsuarioService {
     }
   }
 
-  Future<String?> excluirUsuario(int id) async {
+  Future<String?> excluirUsuario(int id, String token) async {
     try {
       var url = Uri.parse('$baseUrl/usuario/$id');
       final response = await http.delete(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
       );
 
       if (response.statusCode == 200) {
@@ -114,10 +122,16 @@ class UsuarioService {
     }
   }
 
-  Future<Usuario> obterUsuarioPorId(int id) async {
+  Future<Usuario> obterUsuarioPorId(int id, String token) async {
     try {
       var url = Uri.parse('$baseUrl/usuario/$id');
-      var response = await http.get(url);
+      var response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
 
       if (response.statusCode == 200) {
         return Usuario.fromJson(json.decode(response.body));
@@ -129,15 +143,18 @@ class UsuarioService {
     }
   }
 
-  Future<void> editarUsuario(
-      int id, String novoNome, String novoEmail, String novaSenha) async {
+  Future<void> editarUsuario(int id, String novoNome, String novoEmail,
+      String novaSenha, String token) async {
     try {
       var url = Uri.parse('$baseUrl/usuario/$id');
       final response = await http.put(
         url,
         body: jsonEncode(
             {'nome': novoNome, 'email': novoEmail, 'senha': novaSenha}),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
       );
 
       if (response.statusCode == 200) {
@@ -146,6 +163,52 @@ class UsuarioService {
       }
     } catch (error) {
       throw 'Erro ao editar o usuario: $error';
+    }
+  }
+
+  bool isTokenExpired(String token) {
+    try {
+      final Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+
+      if (decodedToken['exp'] != null) {
+        final int exp = decodedToken['exp'];
+        final DateTime expirationDate =
+            DateTime.fromMillisecondsSinceEpoch(exp * 1000);
+
+        return DateTime.now().isAfter(expirationDate);
+      }
+
+      return false; // Não há data de expiração no token
+    } catch (e) {
+      return true; // Erro ao decodificar o token, considerar como expirado
+    }
+  }
+
+  String generateVerificationCode() {
+    // Gere um código de verificação de 4 dígitos
+    final random = Random();
+    return (1000 + random.nextInt(9000)).toString();
+  }
+
+  Future<void> enviarEmailComCodigo(String email, String codigo) async {
+    final smtpServer = gmail('seu_email@gmail.com', 'sua_senha');
+
+    final message = Message()
+      ..from = Address('seu_email@gmail.com', 'Seu Nome')
+      ..recipients.add(email)
+      ..subject = 'Código de Verificação'
+      ..text = 'Seu código de verificação é: $codigo';
+
+    try {
+      final sendReport = await send(message, smtpServer);
+
+      if (sendReport != null) {
+        print('Email enviado com sucesso!');
+      } else {
+        print('Falha ao enviar o email.');
+      }
+    } catch (e) {
+      print('Erro ao enviar o email: $e');
     }
   }
 }

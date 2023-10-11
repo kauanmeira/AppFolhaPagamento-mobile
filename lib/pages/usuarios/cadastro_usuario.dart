@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:app_folha_pagamento/pages/login_page.dart';
 import 'package:app_folha_pagamento/services/HttpService.dart';
+import 'package:app_folha_pagamento/services/auth_middleware.dart';
 import 'package:app_folha_pagamento/services/usuario_service.dart';
 import 'package:flutter/material.dart';
 
@@ -18,6 +19,9 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
   TextEditingController confirmarSenhaController = TextEditingController();
   String? feedbackMessage;
   final UsuarioService usuarioService = UsuarioService();
+  final AuthMiddleware authMiddleware = AuthMiddleware();
+
+  String? selectedUserRole; // Variável para armazenar a escolha do usuário
 
   bool _obscureTextSenha =
       true; // Variável para controlar a visibilidade da senha
@@ -36,12 +40,12 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
   @override
   void initState() {
     super.initState();
+    authMiddleware.checkAuthAndNavigate(context);
+
     HttpOverrides.global = HttpService();
   }
 
   bool isSenhaValida(String senha) {
-    // A expressão regular foi atualizada para exigir 6 ou mais caracteres,
-    // incluindo pelo menos uma letra maiúscula OU um caractere especial.
     final senhaValidaRegExp = RegExp(r'^(?=.*[A-Z!@#$%^&*(),.?":{}|<>]).{6,}$');
     return senhaValidaRegExp.hasMatch(senha);
   }
@@ -56,6 +60,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
     String email = emailController.text;
     String senha = senhaController.text;
     String confirmarSenha = confirmarSenhaController.text;
+    String? token = await usuarioService.getToken();
 
     if (!isSenhasIguais()) {
       setState(() {
@@ -66,14 +71,23 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
         feedbackMessage =
             'A senha deve ter pelo menos 6 caracteres e conter uma letra maiúscula OU um caractere especial.';
       });
+    } else if (selectedUserRole == null ||
+        (selectedUserRole != 'Admin' && selectedUserRole != 'User')) {
+      setState(() {
+        feedbackMessage =
+            'Por favor, escolha o tipo de usuário (Admin ou User).';
+      });
     } else {
+      int permissaoId = selectedUserRole == 'Admin'
+          ? 1
+          : 2; // Sempre 1 para Admin, 2 para User
       try {
-        await usuarioService.cadastrarUsuario(nome, email, senha);
+        await usuarioService.cadastrarUsuario(
+            nome, email, senha, token!, permissaoId);
         setState(() {
           feedbackMessage = 'Usuário Cadastrado com Sucesso';
         });
 
-        // Redireciona para a tela de login após o cadastro bem-sucedido
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -146,7 +160,6 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
               ),
             ),
             SizedBox(height: 10),
-            // Campo de senha com ícone de botão para mostrar/ocultar a senha
             TextFormField(
               keyboardType: TextInputType.text,
               controller: senhaController,
@@ -195,6 +208,33 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                       _obscureTextConfirmarSenha = !_obscureTextConfirmarSenha;
                     });
                   },
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            DropdownButtonFormField<String>(
+              value: selectedUserRole,
+              onChanged: (newValue) {
+                setState(() {
+                  selectedUserRole = newValue;
+                });
+              },
+              items: [
+                DropdownMenuItem(
+                  value: 'Admin',
+                  child: Text('Admin'),
+                ),
+                DropdownMenuItem(
+                  value: 'User',
+                  child: Text('User'),
+                ),
+              ],
+              decoration: InputDecoration(
+                labelText: "Tipo de Usuário",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
                 ),
               ),
             ),

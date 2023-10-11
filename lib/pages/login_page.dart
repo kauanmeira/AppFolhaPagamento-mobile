@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:app_folha_pagamento/pages/home_page.dart';
 import 'package:app_folha_pagamento/pages/reset_password_page.dart';
 import 'package:app_folha_pagamento/pages/usuarios/cadastro_usuario.dart';
+import 'package:app_folha_pagamento/pages/usuarios/esqueci_senha.dart';
 import 'package:app_folha_pagamento/services/HttpService.dart';
 import 'package:app_folha_pagamento/services/usuario_service.dart';
 import 'package:flutter/material.dart';
@@ -130,7 +131,12 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     TextButton(
                       onPressed: () {
-                        // Implemente a ação para "Esqueceu a Senha" aqui
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EsqueciSenha(),
+                          ),
+                        );
                       },
                       child: Text(
                         "Esqueceu a Senha?",

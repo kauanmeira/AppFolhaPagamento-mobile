@@ -35,6 +35,10 @@ dependencies:
   cupertino_icons: ^1.0.2
   intl: ^0.17.0
   shared_preferences: ^2.0.10
+  jwt_decoder: ^2.0.1
+  mailer: ^5.1.4
+  crypto: ^3.0.1
+
   
 dev_dependencies:
   flutter_test:

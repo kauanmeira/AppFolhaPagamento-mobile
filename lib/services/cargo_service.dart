@@ -52,10 +52,16 @@ class CargoService {
     }
   }
 
-  Future<Cargos> obterCargoPorId(int id) async {
+  Future<Cargos> obterCargoPorId(int id, String token) async {
     try {
       var url = Uri.parse('$baseUrl/cargos/$id');
-      var response = await http.get(url);
+      var response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
 
       if (response.statusCode == 200) {
         return Cargos.fromJson(json.decode(response.body));
@@ -67,13 +73,16 @@ class CargoService {
     }
   }
 
-  Future<void> editarCargo(int id, String novoNome) async {
+  Future<void> editarCargo(int id, String novoNome, String token) async {
     try {
       var url = Uri.parse('$baseUrl/cargos/$id');
       final response = await http.put(
         url,
         body: jsonEncode({'nome': novoNome}),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
       );
 
       if (response.statusCode == 200) {
@@ -86,22 +95,27 @@ class CargoService {
     }
   }
 
-  Future<String?> excluirCargo(int id) async {
+  Future<String?> excluirCargo(int id, String token) async {
     try {
       var url = Uri.parse('$baseUrl/cargos/$id');
       final response = await http.delete(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
       );
 
       if (response.statusCode == 200) {
-        // Sucesso ao excluir o cargo (status 204 significa "No Content")
         return 'Cargo Deletado com sucesso';
       } else {
-        throw 'Erro ao excluir o cargo. Código de status: ${response.statusCode}';
+        // Verifique se a resposta contém uma mensagem de erro
+        final responseBody = json.decode(response.body);
+        final errorMessage = responseBody['message'] ?? 'Erro desconhecido';
+        return errorMessage;
       }
     } catch (error) {
-      throw 'Erro ao excluir o cargo: $error';
+      return 'Erro ao excluir o cargo: $error';
     }
   }
 }

@@ -1,3 +1,7 @@
+// ignore_for_file: use_build_context_synchronously, avoid_print
+
+import 'package:app_folha_pagamento/services/auth_middleware.dart';
+import 'package:app_folha_pagamento/services/usuario_service.dart';
 import 'package:flutter/material.dart';
 import 'package:app_folha_pagamento/services/cargo_service.dart';
 
@@ -5,7 +9,7 @@ class EditarCargo extends StatefulWidget {
   final int cargoId;
   final void Function() recarregarDadosCargos;
 
-  EditarCargo({
+  const EditarCargo({
     required this.cargoId,
     required this.recarregarDadosCargos,
     Key? key,
@@ -19,6 +23,8 @@ class _EditarCargoState extends State<EditarCargo> {
   TextEditingController nomeController = TextEditingController();
   String? feedbackMessage;
   final CargoService cargoService = CargoService();
+  final UsuarioService usuarioService = UsuarioService();
+  final AuthMiddleware authMiddleware = AuthMiddleware();
 
   @override
   void dispose() {
@@ -29,16 +35,17 @@ class _EditarCargoState extends State<EditarCargo> {
   @override
   void initState() {
     super.initState();
-
-    // Carregue os detalhes do cargo para edição
+    authMiddleware.checkAuthAndNavigate(context);
     _carregarDetalhesCargo();
   }
 
   Future<void> _editar() async {
     String novoNome = nomeController.text;
 
+    String? token = await usuarioService.getToken();
+
     try {
-      await cargoService.editarCargo(widget.cargoId, novoNome);
+      await cargoService.editarCargo(widget.cargoId, novoNome, token!);
 
       setState(() {
         feedbackMessage = 'Cargo Editado com Sucesso';
@@ -75,12 +82,12 @@ class _EditarCargoState extends State<EditarCargo> {
   }
 
   Future<void> _carregarDetalhesCargo() async {
+    String? token = await usuarioService.getToken();
     try {
-      final cargo = await cargoService.obterCargoPorId(widget.cargoId);
+      final cargo = await cargoService.obterCargoPorId(widget.cargoId, token!);
       nomeController.text = cargo.nome!;
     } catch (error) {
       print('Erro ao carregar detalhes do cargo: $error');
-      // Lidar com o erro, por exemplo, exibir uma mensagem ao usuário.
     }
   }
 
@@ -89,24 +96,24 @@ class _EditarCargoState extends State<EditarCargo> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Editar Cargo'),
-        backgroundColor: Color(0xFF008584),
+        backgroundColor: const Color(0xFF008584),
         actions: [
           IconButton(
             onPressed: _editar,
-            icon: Icon(Icons.save),
+            icon: const Icon(Icons.save),
           ),
         ],
       ),
       body: Container(
-        padding: EdgeInsets.all(40),
+        padding: const EdgeInsets.all(40),
         color: Colors.white,
         child: ListView(
           children: [
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextFormField(
               keyboardType: TextInputType.name,
               controller: nomeController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Nome",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -115,11 +122,11 @@ class _EditarCargoState extends State<EditarCargo> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Container(
               height: 60,
               alignment: Alignment.center,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -132,7 +139,7 @@ class _EditarCargoState extends State<EditarCargo> {
               ),
               child: TextButton(
                 onPressed: _editar,
-                child: Text(
+                child: const Text(
                   "Salvar",
                   style: TextStyle(
                     color: Colors.white,

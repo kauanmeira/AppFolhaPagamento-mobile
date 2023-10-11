@@ -22,7 +22,8 @@ class ColaboradorService {
       String numero,
       String bairro,
       String cidade,
-      String estado) async {
+      String estado,
+      String token) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/colaboradores'),
@@ -44,7 +45,10 @@ class ColaboradorService {
           'cidade': cidade,
           'estado': estado
         }),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
       );
 
       if (response.statusCode == 201) {
@@ -62,15 +66,39 @@ class ColaboradorService {
     }
   }
 
-  Future<List<Colaboradores>> obterColaboradores() async {
-    var url = Uri.parse('$baseUrl/colaboradores');
-    var response = await http.get(url);
+  Future<List<Colaboradores>> obterColaboradoresAtivos(String token) async {
+    var url = Uri.parse('$baseUrl/colaboradores/ativos');
+    var response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
 
     if (response.statusCode == 200) {
-      List listaUsuarios = json.decode(response.body);
-      return listaUsuarios.map((json) => Colaboradores.fromJson(json)).toList();
+      List listaCargos = json.decode(response.body);
+      return listaCargos.map((json) => Colaboradores.fromJson(json)).toList();
     } else {
-      throw Exception('Erro, não foi possível carregar os colaboradores');
+      throw Exception('Erro, não foi possível carregar os cargos');
+    }
+  }
+
+  Future<List<Colaboradores>> obterColaboradores(String token) async {
+    var url = Uri.parse('$baseUrl/colaboradores');
+    var response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List listaCargos = json.decode(response.body);
+      return listaCargos.map((json) => Colaboradores.fromJson(json)).toList();
+    } else {
+      throw Exception('Erro, não foi possível carregar os cargos');
     }
   }
 
@@ -98,10 +126,16 @@ class ColaboradorService {
     }
   }
 
-  Future<Colaboradores> obterColaboradoresPorId(int id) async {
+  Future<Colaboradores> obterColaboradoresPorId(int id, String token) async {
     try {
       var url = Uri.parse('$baseUrl/colaboradores/$id');
-      var response = await http.get(url);
+      var response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
 
       if (response.statusCode == 200) {
         return Colaboradores.fromJson(json.decode(response.body));
@@ -114,26 +148,28 @@ class ColaboradorService {
   }
 
   Future<void> editarColaborador(
-      int id,
-      String novoCpf,
-      String novoNome,
-      String novoSobrenome,
-      String novoSalarioBase,
-      String novaDataNascimento,
-      String novaDataAdmissao,
-      int novoDependentes,
-      int novoFilhos,
-      int novoCargoId,
-      int novaEmpresaId,
-      String novoCep,
-      String novoLogradouro,
-      String novoNumero,
-      String novoBairro,
-      String novaCidade,
-      String novoEstado) async {
+    int id,
+    String novoCpf,
+    String novoNome,
+    String novoSobrenome,
+    String novoSalarioBase,
+    String novaDataNascimento,
+    String novaDataAdmissao,
+    int novoDependentes,
+    int novoFilhos,
+    int novoCargoId,
+    int novaEmpresaId,
+    String novoCep,
+    String novoLogradouro,
+    String novoNumero,
+    String novoBairro,
+    String novaCidade,
+    String novoEstado,
+    String token,
+  ) async {
     try {
       var url = Uri.parse('$baseUrl/colaboradores/$id');
-      final response = await http.put(
+      final response = await http.patch(
         url,
         body: jsonEncode({
           'cpf': novoCpf,
@@ -153,15 +189,43 @@ class ColaboradorService {
           'cidade': novaCidade,
           'estado': novoEstado
         }),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token', // Adicione o token ao cabeçalho
+        },
       );
 
       if (response.statusCode == 200) {
+        // Lida com a resposta de sucesso, se necessário
       } else {
         throw 'Erro ao editar o colaborador. Código de status: ${response.statusCode}';
       }
     } catch (error) {
       throw 'Erro ao editar o colaborador: $error';
+    }
+  }
+
+  Future<String?> demitirColaborador(int id, String token) async {
+    try {
+      var url = Uri.parse('$baseUrl/colaboradores/demitir/$id');
+      final response = await http.put(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return 'Colaborador Demitido com sucesso';
+      } else {
+        // Verifique se a resposta contém uma mensagem de erro
+        final responseBody = json.decode(response.body);
+        final errorMessage = responseBody['message'] ?? 'Erro desconhecido';
+        return errorMessage;
+      }
+    } catch (error) {
+      return 'Erro ao demitir o colaborador: $error';
     }
   }
 }

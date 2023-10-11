@@ -1,3 +1,4 @@
+import 'package:app_folha_pagamento/services/auth_middleware.dart';
 import 'package:app_folha_pagamento/services/usuario_service.dart';
 import 'package:flutter/material.dart';
 
@@ -23,6 +24,7 @@ class _EditarUsuarioState extends State<EditarUsuario> {
       TextEditingController(); // Campo de confirmação de senha
   String? feedbackMessage;
   final UsuarioService usuarioService = UsuarioService();
+  final AuthMiddleware authMiddleware = AuthMiddleware();
 
   @override
   void dispose() {
@@ -36,7 +38,7 @@ class _EditarUsuarioState extends State<EditarUsuario> {
   @override
   void initState() {
     super.initState();
-
+    authMiddleware.checkAuthAndNavigate(context);
     _carregarDetalhesUsuario();
   }
 
@@ -60,10 +62,11 @@ class _EditarUsuarioState extends State<EditarUsuario> {
       );
       return; // Saia da função se as senhas não coincidirem
     }
+    String? token = await usuarioService.getToken();
 
     try {
       await usuarioService.editarUsuario(
-          widget.usuarioId, novoNome, novoEmail, novaSenha);
+          widget.usuarioId, novoNome, novoEmail, novaSenha, token!);
 
       setState(() {
         feedbackMessage = 'Usuario Editado com Sucesso';
@@ -100,8 +103,10 @@ class _EditarUsuarioState extends State<EditarUsuario> {
   }
 
   Future<void> _carregarDetalhesUsuario() async {
+    String? token = await usuarioService.getToken();
     try {
-      final usuario = await usuarioService.obterUsuarioPorId(widget.usuarioId);
+      final usuario =
+          await usuarioService.obterUsuarioPorId(widget.usuarioId, token!);
       nomeController.text = usuario.nome!;
       emailController.text = usuario.email!;
       senhaController.text = usuario.senha!;

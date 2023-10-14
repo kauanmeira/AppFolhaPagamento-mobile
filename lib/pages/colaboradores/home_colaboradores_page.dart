@@ -1,7 +1,6 @@
 import 'package:app_folha_pagamento/services/auth_middleware.dart';
 import 'package:flutter/material.dart';
 import 'package:app_folha_pagamento/models/Colaboradores.dart';
-import 'package:app_folha_pagamento/pages/cargos/cadastro_cargo.dart';
 import 'package:app_folha_pagamento/pages/colaboradores/cadastro_colaborador.dart';
 import 'package:app_folha_pagamento/pages/colaboradores/detalhes_colaborador_page.dart';
 import 'package:app_folha_pagamento/pages/colaboradores/editar_colaborador.dart';
@@ -34,7 +33,7 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
   Future<List<Colaboradores>> recarregarDadosColaborador() async {
     String? token = await usuarioService.getToken();
     if (mostrarInativos) {
-      return colaboradorService.obterColaboradores(token!);
+      return colaboradorService.obterColaboradoresInativos(token!);
     } else {
       return colaboradorService.obterColaboradoresAtivos(token!);
     }
@@ -75,6 +74,62 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
                   }
                 } catch (error) {
                   print('Erro ao demitir colaborador: $error');
+                }
+
+                Navigator.of(context).pop();
+                setState(() {
+                  colaboradores = recarregarDadosColaborador();
+                });
+              },
+            ),
+            TextButton(
+              child: Text('Não'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _confirmarAtivacao(Colaboradores colaborador) async {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+              'Colaborador Inativo\nDeseja ativar e readmitir este colaborador?'),
+          content: Text(
+              'Colaborador: ${colaborador.nome} ${colaborador.sobrenome}\nCPF: ${colaborador.cpf}'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Sim'),
+              onPressed: () async {
+                try {
+                  String? token = await usuarioService.getToken();
+                  String? mensagem = await colaboradorService.ativarColaborador(
+                      colaborador.id!, token!);
+
+                  if (mensagem == 'Colaborador Ativado com sucesso') {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(mensagem!),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(mensagem ?? 'Erro desconhecido'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                } catch (error) {
+                  print('Erro ao ativar colaborador: $error');
                 }
 
                 Navigator.of(context).pop();
@@ -181,18 +236,23 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
                                   IconButton(
                                     icon: Icon(Icons.edit),
                                     onPressed: () {
-                                      Navigator.of(context)
-                                          .push(
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  EditarColaborador(
-                                                colaboradorId: colaborador.id!,
-                                                recarregarDadosColaborador:
-                                                    recarregarDadosColaborador,
+                                      if (mostrarInativos) {
+                                        _confirmarAtivacao(colaborador);
+                                      } else {
+                                        Navigator.of(context)
+                                            .push(
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    EditarColaborador(
+                                                  colaboradorId:
+                                                      colaborador.id!,
+                                                  recarregarDadosColaborador:
+                                                      recarregarDadosColaborador,
+                                                ),
                                               ),
-                                            ),
-                                          )
-                                          .then((value) {});
+                                            )
+                                            .then((value) {});
+                                      }
                                     },
                                   ),
                                   if (!mostrarInativos)

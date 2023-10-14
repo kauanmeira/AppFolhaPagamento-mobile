@@ -124,7 +124,7 @@ class _HomeUsuariosPageState extends State<HomeUsuariosPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Usuários'), // Atualize o título
+        title: const Text('Usuários'),
         backgroundColor: Color(0xFF008584),
         leading: BackButton(
           onPressed: () {
@@ -163,6 +163,7 @@ class _HomeUsuariosPageState extends State<HomeUsuariosPage> {
                             EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                         child: ListTile(
                           title: Text(usuario.nome!),
+                          subtitle: Text(usuario.email!),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [

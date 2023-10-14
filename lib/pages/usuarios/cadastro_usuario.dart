@@ -54,6 +54,13 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
     return senhaController.text == confirmarSenhaController.text;
   }
 
+  bool isEmailValido(String email) {
+    final emailValidoRegExp = RegExp(
+      r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)*(\.\w{2,})$',
+    );
+    return emailValidoRegExp.hasMatch(email);
+  }
+
   Future<void> _cadastrar() async {
     print('Cadastrando...');
     String nome = nomeController.text;
@@ -70,6 +77,10 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
       setState(() {
         feedbackMessage =
             'A senha deve ter pelo menos 6 caracteres e conter uma letra maiúscula OU um caractere especial.';
+      });
+    } else if (!isEmailValido(email)) {
+      setState(() {
+        feedbackMessage = 'Por favor, insira um e-mail válido.';
       });
     } else if (selectedUserRole == null ||
         (selectedUserRole != 'Admin' && selectedUserRole != 'User')) {
@@ -127,7 +138,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
           children: [
             Center(
               child: Image.network(
-                "https://cdn-icons-png.flaticon.com/512/3126/3126589.png",
+                "https://cdn-icons-png.flaticon.com/512/1177/1177568.png",
                 width: 128,
                 height: 128,
               ),

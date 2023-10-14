@@ -1,5 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:app_folha_pagamento/pages/holerites/home_holerites_page.dart';
 import 'package:app_folha_pagamento/services/auth_middleware.dart';
 import 'package:flutter/material.dart';
@@ -25,9 +23,11 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
   late List<Colaboradores> colaboradores = [];
   List<Holerites> holerites = [];
   int colaboradorId = 0;
-  int mes = 1; // O mês começa em janeiro (1)
+  int mes = 1;
   int ano = DateTime.now().year;
   int horasNormais = 0;
+  TextEditingController horasNormaisController = TextEditingController();
+  TextEditingController anoController = TextEditingController();
   bool horasExtrasEnabled = false;
   int horasExtras = 0;
   int tipo = 0;
@@ -44,7 +44,7 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
     String? token = await usuarioService.getToken();
     try {
       final listaColaboradores =
-          await colaboradorService.obterColaboradores(token!);
+          await colaboradorService.obterColaboradoresAtivos(token!);
       setState(() {
         colaboradores = listaColaboradores;
         colaboradorId =
@@ -71,19 +71,46 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
     String? token = await usuarioService.getToken();
 
     try {
-      final Holerites holerite = await holeriteService.gerarHolerite(
-          colaboradorId: colaboradorId,
-          mes: mes,
-          ano: ano,
-          horasNormais: horasNormais,
-          horasExtrasEnabled: horasExtrasEnabled,
-          horasExtras: horasExtras,
-          tipo: tipo,
-          token: token!);
+      final String responseMessage = await holeriteService.gerarHolerite(
+        colaboradorId: colaboradorId,
+        mes: mes,
+        ano: ano,
+        horasNormais: horasNormais,
+        horasExtrasEnabled: horasExtrasEnabled,
+        horasExtras: horasExtras,
+        tipo: tipo,
+        token: token!,
+      );
 
-      // Faça algo com o holerite gerado, como exibir um resumo ou uma confirmação.
+      print('Resposta da geração de holerite: $responseMessage');
+
+      final isSuccessful = responseMessage.toLowerCase().contains('sucesso');
+
+      final scaffoldColor = isSuccessful ? Colors.green : Colors.red;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(responseMessage),
+          backgroundColor: scaffoldColor,
+        ),
+      );
+
+      if (isSuccessful) {
+        // Redirecionar para a HomeHoleritesPage se o holerite for gerado com sucesso
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => HomeHoleritesPage(),
+          ),
+        );
+      }
     } catch (error) {
       print('Erro ao gerar holerite: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('$error'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -93,7 +120,8 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
       appBar: AppBar(
         title: Text('Geração de Holerite'),
         backgroundColor: Color(0xFF008584),
-        leading: BackButton(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.of(context).push(
               MaterialPageRoute(
@@ -108,58 +136,133 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('Colaborador:'),
-            DropdownButton<int>(
-              value: colaboradorId,
-              items: colaboradores.map((colaborador) {
-                return DropdownMenuItem<int>(
-                  value: colaborador.id,
-                  child: Text('${colaborador.nome} ${colaborador.sobrenome}'),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  colaboradorId = value!;
-                });
-              },
+            Center(
+              child: Image.network(
+                "https://cdn-icons-png.flaticon.com/512/189/189715.png",
+                width: 128,
+                height: 128,
+              ),
             ),
-            SizedBox(height: 16),
-            Text('Mês:'),
-            DropdownButton<int>(
-              value: mes,
-              items: List<DropdownMenuItem<int>>.generate(12, (int index) {
-                return DropdownMenuItem<int>(
-                  value: index + 1,
-                  child: Text(_nomeMes(index + 1)),
-                );
-              }),
-              onChanged: (value) {
-                setState(() {
-                  mes = value!;
-                });
-              },
+            SizedBox(height: 40),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Colaborador',
+                        style: TextStyle(
+                          color: Colors.black38,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 20,
+                        ),
+                      ),
+                      DropdownButton<int>(
+                        value: colaboradorId,
+                        items: colaboradores.map((colaborador) {
+                          return DropdownMenuItem<int>(
+                            value: colaborador.id,
+                            child: Container(
+                              width: 250, // Largura desejada
+                              child: Text(
+                                  '${colaborador.nome} ${colaborador.sobrenome}'),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            colaboradorId = value!;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 16),
-            Text('Ano:'),
+            SizedBox(height: 10),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextFormField(
+                        keyboardType: TextInputType.number,
+                        controller: anoController,
+                        decoration: InputDecoration(
+                          labelText: "Ano",
+                          labelStyle: TextStyle(
+                            color: Colors.black38,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Mês',
+                        style: TextStyle(
+                          color: Colors.black38,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 20,
+                        ),
+                      ),
+                      DropdownButton<int>(
+                        value: mes,
+                        items: List<DropdownMenuItem<int>>.generate(12,
+                            (int index) {
+                          return DropdownMenuItem<int>(
+                            value: index + 1,
+                            child: Container(
+                              width: 100, // Largura desejada
+                              child: Text(_nomeMes(index + 1)),
+                            ),
+                          );
+                        }),
+                        onChanged: (value) {
+                          setState(() {
+                            mes = value!;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
             TextFormField(
+              controller: horasNormaisController,
+              decoration: InputDecoration(
+                labelText: "Horas normais",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
               keyboardType: TextInputType.number,
               onChanged: (value) {
+                int newValue = int.tryParse(value) ?? 0;
+                if (newValue > 220) {
+                  newValue = 220;
+                  horasNormaisController.text = '220';
+                }
                 setState(() {
-                  ano = int.tryParse(value) ?? DateTime.now().year;
+                  horasNormais = newValue;
                 });
               },
             ),
-            SizedBox(height: 16),
-            Text('Horas Normais:'),
-            TextFormField(
-              keyboardType: TextInputType.number,
-              onChanged: (value) {
-                setState(() {
-                  horasNormais = int.tryParse(value) ?? 0;
-                });
-              },
-            ),
-            SizedBox(height: 16),
+            SizedBox(height: 10),
             Row(
               children: <Widget>[
                 Checkbox(
@@ -182,20 +285,49 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
                   });
                 },
               ),
-            SizedBox(height: 16),
-            Text('Tipo:'),
+            SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: "Tipo",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
               onChanged: (value) {
                 setState(() {
                   tipo = int.tryParse(value) ?? 0;
                 });
               },
             ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _gerarHolerite,
-              child: Text('Gerar Holerite'),
+            SizedBox(height: 10),
+            Container(
+              height: 60,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  stops: [0.3, 1],
+                  colors: [Color(0xFF008584), Color(0xFF007C70)],
+                ),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(5),
+                ),
+              ),
+              child: TextButton(
+                onPressed: _gerarHolerite,
+                child: Text(
+                  "Salvar",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ),
           ],
         ),

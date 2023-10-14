@@ -17,8 +17,12 @@ class HoleriteService {
     );
 
     if (response.statusCode == 200) {
-      List listaEmpresas = json.decode(response.body);
-      return listaEmpresas.map((json) => Holerites.fromJson(json)).toList();
+      if (response.body.isNotEmpty) {
+        List listaEmpresas = json.decode(response.body);
+        return listaEmpresas.map((json) => Holerites.fromJson(json)).toList();
+      } else {
+        return <Holerites>[];
+      }
     } else {
       throw Exception('Erro, não foi possível carregar o Holerite');
     }
@@ -46,7 +50,7 @@ class HoleriteService {
     }
   }
 
-  Future<Holerites> gerarHolerite({
+  Future<String> gerarHolerite({
     required int colaboradorId,
     required int mes,
     required int ano,
@@ -76,13 +80,70 @@ class HoleriteService {
         body: json.encode(data),
       );
 
-      if (response.statusCode == 200) {
-        return Holerites.fromJson(json.decode(response.body));
+      if (response.statusCode == 201) {
+        return 'Holerite cadastrado com sucesso';
+      } else if (response.statusCode == 400) {
+        final jsonResponse = json.decode(response.body);
+        final errorMessage = jsonResponse['message'];
+        throw errorMessage ?? 'Erro ao cadastrar o holerite';
       } else {
-        throw 'Erro ao gerar holerite. Código de status: ${response.statusCode}';
+        throw 'Erro ao cadastrar o holerite. Código de status: ${response.statusCode}';
       }
     } catch (error) {
-      throw 'Erro ao gerar holerite: $error';
+      throw 'Erro ao cadastrar o holerite: $error';
+    }
+  }
+
+  Future<String> obterNomeSobrenomeColaborador(
+      int colaboradorId, String token) async {
+    var url = Uri.parse('$baseUrl/colaboradores/$colaboradorId');
+    var response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final colaborador = json.decode(response.body);
+      final nome = colaborador['nome'];
+      final sobrenome = colaborador['sobrenome'];
+      return '$nome $sobrenome';
+    } else {
+      throw Exception('Erro ao obter o nome e sobrenome do colaborador');
+    }
+  }
+
+  Future<List<Holerites>> obterHoleritesPorMesAno(
+      String token, int month, int year) async {
+    try {
+      var url = Uri.parse('$baseUrl/holerites/filtro');
+      url =
+          Uri.https(url.authority, url.path, {'ano': '$year', 'mes': '$month'});
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        if (response.body.isNotEmpty) {
+          List listaHolerites = json.decode(response.body);
+          return listaHolerites
+              .map((json) => Holerites.fromJson(json))
+              .toList();
+        } else {
+          return <Holerites>[];
+        }
+      } else {
+        throw Exception('Erro ao carregar os Holerites filtrados');
+      }
+    } catch (error) {
+      throw 'Erro ao filtrar Holerites: $error';
     }
   }
 }

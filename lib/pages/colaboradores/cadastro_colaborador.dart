@@ -360,7 +360,6 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
                 ),
               ),
               onChanged: (value) {
-                // Use a função para formatar o nome
                 String formattedName = capitalizeFirstLetter(value);
                 nomeController.value = nomeController.value.copyWith(
                   text: formattedName,
@@ -632,34 +631,29 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
               ),
             ),
             SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () {
-                _cadastrar();
-              },
-              child: Text(
-                'Cadastrar',
-                style: TextStyle(
-                  fontSize: 20,
+            Container(
+              height: 60,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  stops: [0.3, 1],
+                  colors: [Color(0xFF008584), Color(0xFF007C70)],
+                ),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(5),
                 ),
               ),
-              style: ElevatedButton.styleFrom(
-                primary: Color(0xFF008584),
-                padding: EdgeInsets.symmetric(
-                  vertical: 15,
-                  horizontal: 30,
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text(
-                'Voltar',
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Color(0xFF008584),
+              child: TextButton(
+                onPressed: _cadastrar,
+                child: Text(
+                  "Salvar",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),

@@ -77,15 +77,17 @@ class ColaboradorService {
     );
 
     if (response.statusCode == 200) {
-      List listaCargos = json.decode(response.body);
-      return listaCargos.map((json) => Colaboradores.fromJson(json)).toList();
+      List listaColaboradores = json.decode(response.body);
+      return listaColaboradores
+          .map((json) => Colaboradores.fromJson(json))
+          .toList();
     } else {
-      throw Exception('Erro, não foi possível carregar os cargos');
+      throw Exception('Erro, não foi possível carregar os colaboradores');
     }
   }
 
-  Future<List<Colaboradores>> obterColaboradores(String token) async {
-    var url = Uri.parse('$baseUrl/colaboradores');
+  Future<List<Colaboradores>> obterColaboradoresInativos(String token) async {
+    var url = Uri.parse('$baseUrl/colaboradores/inativos');
     var response = await http.get(
       url,
       headers: {
@@ -95,10 +97,12 @@ class ColaboradorService {
     );
 
     if (response.statusCode == 200) {
-      List listaCargos = json.decode(response.body);
-      return listaCargos.map((json) => Colaboradores.fromJson(json)).toList();
+      List listaColaboradores = json.decode(response.body);
+      return listaColaboradores
+          .map((json) => Colaboradores.fromJson(json))
+          .toList();
     } else {
-      throw Exception('Erro, não foi possível carregar os cargos');
+      throw Exception('Erro, não foi possível carregar os colaboradores');
     }
   }
 
@@ -226,6 +230,30 @@ class ColaboradorService {
       }
     } catch (error) {
       return 'Erro ao demitir o colaborador: $error';
+    }
+  }
+
+   Future<String?> ativarColaborador(int id, String token) async {
+    try {
+      var url = Uri.parse('$baseUrl/colaboradores/reativar/$id');
+      final response = await http.put(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return 'Colaborador Ativado com sucesso';
+      } else {
+        // Verifique se a resposta contém uma mensagem de erro
+        final responseBody = json.decode(response.body);
+        final errorMessage = responseBody['message'] ?? 'Erro desconhecido';
+        return errorMessage;
+      }
+    } catch (error) {
+      return 'Erro ao ativar o colaborador: $error';
     }
   }
 }

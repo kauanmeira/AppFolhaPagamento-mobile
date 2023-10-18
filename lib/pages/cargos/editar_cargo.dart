@@ -59,7 +59,6 @@ class _EditarCargoState extends State<EditarCargo> {
       );
 
       Navigator.of(context).pop(); // Fecha a página de edição
-      widget.recarregarDadosCargos(); // Chame a função de recarregamento
     } catch (error) {
       if (error is String) {
         setState(() {
@@ -105,9 +104,9 @@ class _EditarCargoState extends State<EditarCargo> {
         ],
       ),
       body: Container(
-        padding: const EdgeInsets.all(40),
+        padding: const EdgeInsets.all(20),
         color: Colors.white,
-        child: ListView(
+        child: Column(
           children: [
             const SizedBox(height: 20),
             TextFormField(
@@ -133,9 +132,7 @@ class _EditarCargoState extends State<EditarCargo> {
                   stops: [0.3, 1],
                   colors: [Color(0xFF008584), Color(0xFF007C70)],
                 ),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(5),
-                ),
+                borderRadius: BorderRadius.all(Radius.circular(5)),
               ),
               child: TextButton(
                 onPressed: _editar,

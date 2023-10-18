@@ -1,9 +1,9 @@
-import 'dart:convert';
+// ignore_for_file: use_key_in_widget_constructors, library_private_types_in_public_api, avoid_print, use_build_context_synchronously
+
 import 'dart:io';
 import 'package:app_folha_pagamento/models/Cargos.dart';
 import 'package:app_folha_pagamento/models/Empresas.dart';
 import 'package:app_folha_pagamento/pages/colaboradores/home_colaboradores_page.dart';
-import 'package:app_folha_pagamento/pages/login_page.dart';
 import 'package:app_folha_pagamento/services/HttpService.dart';
 import 'package:app_folha_pagamento/services/auth_middleware.dart';
 import 'package:app_folha_pagamento/services/cargo_service.dart';
@@ -135,23 +135,6 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
     }
   }
 
-  void _preencherEndereco(Map<String, dynamic> endereco) {
-    if (endereco.containsKey('error')) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(endereco['error']),
-          backgroundColor: Colors.red,
-        ),
-      );
-    } else {
-      setState(() {
-        logradouroController.text = endereco['logradouro'];
-        bairroController.text = endereco['bairro'];
-        cidadeController.text = endereco['cidade'];
-        estadoController.text = endereco['estado'];
-      });
-    }
-  }
 
   Future<void> _cadastrar() async {
     print('Cadastrando...');
@@ -160,7 +143,6 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
     String sobrenome = sobrenomeController.text;
     String salarioBase = salarioBaseController.text;
     DateFormat inputDateFormat = DateFormat('dd/MM/yyyy');
-    DateFormat displayDateFormat = DateFormat('dd/MM/yyyy');
     DateFormat jsonDateFormat = DateFormat('yyyy-MM-dd');
     // Analise as datas no formato "dd/MM/yyyy"
     DateTime dataNascimento =
@@ -213,7 +195,7 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => HomeColaboradoresPage(),
+            builder: (context) => const HomeColaboradoresPage(),
           ),
         );
       }
@@ -239,7 +221,7 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
                       ? Colors.green
                       : Colors.red,
             )
-          : SnackBar(content: Text('Erro desconhecido')),
+          : const SnackBar(content: Text('Erro desconhecido')),
     );
   }
 
@@ -265,7 +247,7 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
     } catch (error) {
       print('Erro ao buscar o endereço: $error');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Erro ao buscar o endereço'),
           backgroundColor: Colors.red,
         ),
@@ -278,43 +260,19 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
     return text[0].toUpperCase() + text.substring(1);
   }
 
-  // Função para verificar o token e redirecionar para a tela de login se estiver expirado
-  Future<void> _checkTokenAndRedirect(BuildContext context) async {
-    final token = await usuarioService.getToken();
 
-    if (token != null && !usuarioService.isTokenExpired(token)) {
-      // Token válido, não é necessário fazer nada
-    } else {
-      // Token expirado ou ausente, exiba uma mensagem e redirecione para a tela de login
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Sua sessão expirou, faça login novamente.'),
-          backgroundColor: Colors.red,
-        ),
-      );
 
-      // Redirecionar para a tela de login
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => LoginPage(),
-        ),
-      );
-    }
-  }
-
+  @override
   Widget build(BuildContext context) {
-    _checkTokenAndRedirect(context);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cadastro de colaborador'),
-        backgroundColor: Color(0xFF008584),
+        backgroundColor: const Color(0xFF008584),
         leading: BackButton(
           onPressed: () {
             Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
-                builder: (context) => HomeColaboradoresPage(),
+                builder: (context) => const HomeColaboradoresPage(),
               ),
               (route) => false,
             );
@@ -322,7 +280,7 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
         ),
       ),
       body: Container(
-        padding: EdgeInsets.all(40),
+        padding: const EdgeInsets.all(40),
         color: Colors.white,
         child: ListView(
           children: [
@@ -333,12 +291,12 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
                 height: 128,
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextFormField(
               autofocus: true,
               keyboardType: TextInputType.number,
               controller: cpfController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "CPF",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -347,11 +305,11 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.name,
               controller: nomeController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Nome",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -368,11 +326,11 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
                 );
               },
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.name,
               controller: sobrenomeController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Sobrenome",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -389,11 +347,11 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
                 );
               },
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.number,
               controller: salarioBaseController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Salário Base",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -402,11 +360,11 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.datetime,
               controller: dataNascimentoController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Data de Nascimento",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -441,11 +399,11 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
                 }
               },
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.datetime,
               controller: dataAdmissaoController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Data de Admissão",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -469,11 +427,11 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
                 }
               },
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.number,
               controller: dependentesController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Dependentes",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -482,11 +440,11 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.number,
               controller: filhosController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Filhos",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -495,7 +453,7 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             DropdownButtonFormField<int>(
               value:
                   selectedCargoId, // Variável para armazenar o cargo selecionado
@@ -511,7 +469,7 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
                   child: Text(cargo.nome!), // Exiba o nome do cargo no dropdown
                 );
               }).toList(),
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Cargo",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -520,7 +478,7 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             DropdownButtonFormField<int>(
               value:
                   selectedEmpresaId, // Variável para armazenar o cargo selecionado
@@ -537,7 +495,7 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
                       .nomeFantasia!), // Exiba o nome do cargo no dropdown
                 );
               }).toList(),
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Empresa",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -546,11 +504,11 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.number,
               controller: cepController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "CEP",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -565,11 +523,11 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
                 }
               },
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.text,
               controller: logradouroController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Logradouro",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -578,11 +536,11 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.text,
               controller: numeroController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Número",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -591,11 +549,11 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.text,
               controller: bairroController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Bairro",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -604,11 +562,11 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.text,
               controller: cidadeController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Cidade",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -617,11 +575,11 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.text,
               controller: estadoController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Estado",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -630,11 +588,11 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
                 ),
               ),
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             Container(
               height: 60,
               alignment: Alignment.center,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -647,7 +605,7 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
               ),
               child: TextButton(
                 onPressed: _cadastrar,
-                child: Text(
+                child: const Text(
                   "Salvar",
                   style: TextStyle(
                     color: Colors.white,

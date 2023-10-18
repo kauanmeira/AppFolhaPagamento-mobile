@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 class CargoService {
   final String baseUrl = 'https://192.168.0.240:7256/api';
-  final UsuarioService usuarioService = new UsuarioService();
+  final UsuarioService usuarioService = UsuarioService();
 
   Future<Map<String, dynamic>?> cadastrarCargo(
       String nome, String token) async {

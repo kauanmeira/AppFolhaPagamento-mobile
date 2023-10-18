@@ -1,9 +1,13 @@
+// ignore_for_file: unnecessary_null_comparison, avoid_print, use_build_context_synchronously
+
+import 'package:app_folha_pagamento/pages/cargos/home_cargos_page.dart';
 import 'package:flutter/material.dart';
 import 'package:app_folha_pagamento/models/Holerites.dart';
 import 'package:app_folha_pagamento/pages/holerites/detalhes_holerite_page.dart';
 import 'package:app_folha_pagamento/pages/holerites/gerar_holerite_page.dart';
 import 'package:app_folha_pagamento/pages/home_page.dart';
 import 'package:app_folha_pagamento/services/auth_middleware.dart';
+import 'package:app_folha_pagamento/services/colaborador_service.dart';
 import 'package:app_folha_pagamento/services/holerite_service.dart';
 import 'package:app_folha_pagamento/services/usuario_service.dart';
 
@@ -18,15 +22,40 @@ class _HomeHoleritesPageState extends State<HomeHoleritesPage> {
   late Future<List<Holerites>> holerites;
   final HoleriteService holeriteService = HoleriteService();
   final UsuarioService usuarioService = UsuarioService();
+  final ColaboradorService colaboradorService = ColaboradorService();
   final AuthMiddleware authMiddleware = AuthMiddleware();
   int selectedMonth = DateTime.now().month;
   int selectedYear = DateTime.now().year;
+  String? token;
 
   @override
   void initState() {
     super.initState();
     authMiddleware.checkAuthAndNavigate(context);
     holerites = _recarregarDadosHolerite(selectedMonth, selectedYear);
+    _recarregarToken();
+  }
+
+  Future<void> _recarregarToken() async {
+    token = await usuarioService.getToken();
+  }
+
+  Future<String> _getNomeCpfColaborador(int colaboradorId) async {
+    String? token = await usuarioService.getToken();
+    try {
+      final colaborador = await colaboradorService.obterColaboradoresPorId(
+          colaboradorId, token!);
+
+      // Verifique se o colaborador não é nulo antes de acessar seus campos
+      if (colaborador != null) {
+        return '${colaborador.nome} ${colaborador.sobrenome} - CPF: ${colaborador.cpf}';
+      } else {
+        return 'Colaborador não encontrado';
+      }
+    } catch (error) {
+      print('Erro ao obter nome e CPF do colaborador: $error');
+      return 'Erro ao obter informações do colaborador';
+    }
   }
 
   Future<List<Holerites>> _recarregarDadosHolerite(int month, int year) async {
@@ -41,17 +70,16 @@ class _HomeHoleritesPageState extends State<HomeHoleritesPage> {
       return;
     }
 
-    showDialog<void>(
+    showDialog(
       context: context,
-      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Deseja realmente excluir este holerite?'),
+          title: const Text('Deseja realmente excluir este holerite?'),
           content: Text(
               'Holerite: ${holerite.mes}/${holerite.ano}\nColaborador:${holerite.colaboradorId}'),
           actions: <Widget>[
             TextButton(
-              child: Text('Sim'),
+              child: const Text('Sim'),
               onPressed: () async {
                 try {
                   String? mensagem = await holeriteService.excluirHolerite(
@@ -66,13 +94,16 @@ class _HomeHoleritesPageState extends State<HomeHoleritesPage> {
 
                     Navigator.of(context).pop();
 
-                    _recarregarDadosHolerite(selectedMonth, selectedYear);
+                    setState(() {
+                      holerites =
+                          _recarregarDadosHolerite(selectedMonth, selectedYear);
+                    });
                   }
                 } catch (error) {
-                  print('Erro ao excluir usuario: $error');
+                  print('Erro ao excluir usuário: $error');
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Erro ao excluir usuario: $error'),
+                      content: Text('Erro ao excluir usuário: $error'),
                       backgroundColor: Colors.red,
                     ),
                   );
@@ -80,7 +111,7 @@ class _HomeHoleritesPageState extends State<HomeHoleritesPage> {
               },
             ),
             TextButton(
-              child: Text('Não'),
+              child: const Text('Não'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -96,8 +127,9 @@ class _HomeHoleritesPageState extends State<HomeHoleritesPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Holerites'),
-        backgroundColor: Color(0xFF008584),
-        leading: BackButton(
+        backgroundColor: const Color(0xFF008584),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
@@ -109,7 +141,6 @@ class _HomeHoleritesPageState extends State<HomeHoleritesPage> {
         ),
       ),
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -119,7 +150,7 @@ class _HomeHoleritesPageState extends State<HomeHoleritesPage> {
                 items: List<DropdownMenuItem<int>>.generate(12, (int index) {
                   return DropdownMenuItem<int>(
                     value: index + 1,
-                    child: Text(meses[index]), // Use o nome do mês aqui
+                    child: Text(meses[index]),
                   );
                 }),
                 onChanged: (int? value) {
@@ -157,11 +188,13 @@ class _HomeHoleritesPageState extends State<HomeHoleritesPage> {
               future: holerites,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CustomLoadingIndicator();
                 } else if (snapshot.hasError) {
-                  return Text(snapshot.error.toString());
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Center(
+                    child: Text(snapshot.error.toString()),
+                  );
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(
                     child: Text('Nenhum holerite disponível'),
                   );
                 } else {
@@ -169,46 +202,57 @@ class _HomeHoleritesPageState extends State<HomeHoleritesPage> {
                     itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
                       Holerites holerite = snapshot.data![index];
+                      String tipoHolerite =
+                          holerite.tipo == 1 ? 'Holerite' : '13º Salário';
+
                       return Card(
                         elevation: 2,
-                        margin:
-                            EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 16),
                         child: ListTile(
-                          title: Row(
+                          title: Text(
+                              '$tipoHolerite - ${meses[holerite.mes! - 1]} ${holerite.ano}'),
+                          subtitle: FutureBuilder<String>(
+                            future:
+                                _getNomeCpfColaborador(holerite.colaboradorId!),
+                            builder: (context, colaboradorSnapshot) {
+                              if (colaboradorSnapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Text('Carregando...');
+                              } else if (colaboradorSnapshot.hasError) {
+                                return const Text(
+                                    'Erro ao carregar informações do colaborador');
+                              } else {
+                                return Text(colaboradorSnapshot.data ?? '');
+                              }
+                            },
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              Expanded(
-                                child: Text(
-                                  'Mês: ${holerite.mes}, Ano: ${holerite.ano}',
-                                ),
+                              IconButton(
+                                icon: const Icon(Icons.remove_red_eye),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          DetalhesHoleritePage(
+                                        holerite: holerite,
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: Icon(Icons.remove_red_eye),
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              DetalhesHoleritePage(
-                                                  holerite: holerite),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.delete, color: Colors.red),
-                                    onPressed: () {
-                                      _confirmarExclusao(holerite);
-                                    },
-                                  ),
-                                ],
+                              IconButton(
+                                icon:
+                                    const Icon(Icons.delete, color: Colors.red),
+                                onPressed: () {
+                                  _confirmarExclusao(holerite);
+                                },
                               ),
                             ],
                           ),
-                          subtitle: Text(
-                              'Horas Normais: ${holerite.horasNormais}, Horas Extras: ${holerite.horasExtras}'),
                         ),
                       );
                     },
@@ -220,16 +264,16 @@ class _HomeHoleritesPageState extends State<HomeHoleritesPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Color(0xFF008584),
+        backgroundColor: const Color(0xFF008584),
         onPressed: () {
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
-              builder: (context) => GerarHoleritePage(),
+              builder: (context) => const GerarHoleritePage(),
             ),
             (route) => false,
           );
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

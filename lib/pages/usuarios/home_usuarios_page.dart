@@ -1,14 +1,13 @@
-import 'dart:convert';
+// ignore_for_file: use_build_context_synchronously, unrelated_type_equality_checks, avoid_print
+
 import 'package:app_folha_pagamento/models/Usuario.dart';
-import 'package:app_folha_pagamento/pages/cargos/cadastro_cargo.dart';
+import 'package:app_folha_pagamento/pages/cargos/home_cargos_page.dart';
 import 'package:app_folha_pagamento/pages/home_page.dart';
-import 'package:app_folha_pagamento/pages/login_page.dart';
 import 'package:app_folha_pagamento/pages/usuarios/cadastro_usuario.dart';
 import 'package:app_folha_pagamento/pages/usuarios/editar_usuario.dart';
 import 'package:app_folha_pagamento/services/auth_middleware.dart';
 import 'package:app_folha_pagamento/services/usuario_service.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 class HomeUsuariosPage extends StatefulWidget {
@@ -48,7 +47,7 @@ class _HomeUsuariosPageState extends State<HomeUsuariosPage> {
 
     if (userIdLoggedIn == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Não foi possível obter o ID do usuário logado.'),
           backgroundColor: Colors.red,
         ),
@@ -58,7 +57,7 @@ class _HomeUsuariosPageState extends State<HomeUsuariosPage> {
 
     if (usuario.id == userIdLoggedIn) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Você não pode excluir sua própria conta.'),
           backgroundColor: Colors.red,
         ),
@@ -71,11 +70,11 @@ class _HomeUsuariosPageState extends State<HomeUsuariosPage> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Deseja realmente excluir este usuário?'),
+          title: const Text('Deseja realmente excluir este usuário?'),
           content: Text('Usuario: ${usuario.email}'),
           actions: <Widget>[
             TextButton(
-              child: Text('Sim'),
+              child: const Text('Sim'),
               onPressed: () async {
                 try {
                   String? mensagem =
@@ -109,7 +108,7 @@ class _HomeUsuariosPageState extends State<HomeUsuariosPage> {
               },
             ),
             TextButton(
-              child: Text('Não'),
+              child: const Text('Não'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -125,7 +124,7 @@ class _HomeUsuariosPageState extends State<HomeUsuariosPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Usuários'),
-        backgroundColor: Color(0xFF008584),
+        backgroundColor: const Color(0xFF008584),
         leading: BackButton(
           onPressed: () {
             Navigator.of(context).pushAndRemoveUntil(
@@ -145,11 +144,11 @@ class _HomeUsuariosPageState extends State<HomeUsuariosPage> {
               future: usuarios,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CustomLoadingIndicator();
                 } else if (snapshot.hasError) {
                   return Text(snapshot.error.toString());
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(
+                  return const Center(
                     child: Text('Nenhum dado disponível'),
                   );
                 } else {
@@ -160,7 +159,7 @@ class _HomeUsuariosPageState extends State<HomeUsuariosPage> {
                       return Card(
                         elevation: 2,
                         margin:
-                            EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                            const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                         child: ListTile(
                           title: Text(usuario.nome!),
                           subtitle: Text(usuario.email!),
@@ -168,7 +167,7 @@ class _HomeUsuariosPageState extends State<HomeUsuariosPage> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
-                                icon: Icon(Icons.edit),
+                                icon: const Icon(Icons.edit),
                                 onPressed: () {
                                   Navigator.of(context)
                                       .push(
@@ -184,7 +183,7 @@ class _HomeUsuariosPageState extends State<HomeUsuariosPage> {
                                 },
                               ),
                               IconButton(
-                                icon: Icon(Icons.delete, color: Colors.red),
+                                icon: const Icon(Icons.delete, color: Colors.red),
                                 onPressed: () {
                                   _confirmarExclusao(usuario);
                                 },
@@ -202,19 +201,19 @@ class _HomeUsuariosPageState extends State<HomeUsuariosPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Color(0xFF008584),
+        backgroundColor: const Color(0xFF008584),
         onPressed: () {
           Navigator.of(context)
               .push(
             MaterialPageRoute(
-              builder: (context) => CadastroUsuario(),
+              builder: (context) => const CadastroUsuario(),
             ),
           )
               .then((value) {
             recarregarDadosUsuarios();
           });
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

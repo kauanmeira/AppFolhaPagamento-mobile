@@ -1,3 +1,6 @@
+// ignore_for_file: use_build_context_synchronously, avoid_print
+
+import 'package:app_folha_pagamento/pages/cargos/home_cargos_page.dart';
 import 'package:app_folha_pagamento/services/auth_middleware.dart';
 import 'package:flutter/material.dart';
 import 'package:app_folha_pagamento/models/Colaboradores.dart';
@@ -45,12 +48,12 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Deseja realmente demitir este colaborador?'),
+          title: const Text('Deseja realmente demitir este colaborador?'),
           content: Text(
               'Colaborador: ${colaborador.nome} ${colaborador.sobrenome}\nCPF: ${colaborador.cpf}'),
           actions: <Widget>[
             TextButton(
-              child: Text('Sim'),
+              child: const Text('Sim'),
               onPressed: () async {
                 try {
                   String? token = await usuarioService.getToken();
@@ -83,7 +86,7 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
               },
             ),
             TextButton(
-              child: Text('Não'),
+              child: const Text('Não'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -100,13 +103,13 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(
+          title: const Text(
               'Colaborador Inativo\nDeseja ativar e readmitir este colaborador?'),
           content: Text(
               'Colaborador: ${colaborador.nome} ${colaborador.sobrenome}\nCPF: ${colaborador.cpf}'),
           actions: <Widget>[
             TextButton(
-              child: Text('Sim'),
+              child: const Text('Sim'),
               onPressed: () async {
                 try {
                   String? token = await usuarioService.getToken();
@@ -139,7 +142,7 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
               },
             ),
             TextButton(
-              child: Text('Não'),
+              child: const Text('Não'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -155,7 +158,7 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Colaboradores'),
-        backgroundColor: Color(0xFF008584),
+        backgroundColor: const Color(0xFF008584),
         leading: BackButton(
           onPressed: () {
             Navigator.of(context).pushAndRemoveUntil(
@@ -185,7 +188,7 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
                       });
                     },
                   ),
-                  Text('Mostrar inativos'),
+                  const Text('Mostrar inativos'),
                 ],
               ),
             ),
@@ -195,11 +198,11 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
               future: colaboradores,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CustomLoadingIndicator();
                 } else if (snapshot.hasError) {
                   return Text(snapshot.error.toString());
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(
+                  return const Center(
                     child: Text('Nenhum dado disponível'),
                   );
                 } else {
@@ -210,7 +213,7 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
                       return Card(
                         elevation: 2,
                         margin:
-                            EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                            const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                         child: ListTile(
                           title: Row(
                             children: [
@@ -222,7 +225,7 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   IconButton(
-                                    icon: Icon(Icons.remove_red_eye),
+                                    icon: const Icon(Icons.remove_red_eye),
                                     onPressed: () {
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
@@ -234,7 +237,7 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
                                     },
                                   ),
                                   IconButton(
-                                    icon: Icon(Icons.edit),
+                                    icon: const Icon(Icons.edit),
                                     onPressed: () {
                                       if (mostrarInativos) {
                                         _confirmarAtivacao(colaborador);
@@ -258,7 +261,7 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
                                   if (!mostrarInativos)
                                     IconButton(
                                       icon:
-                                          Icon(Icons.delete, color: Colors.red),
+                                          const Icon(Icons.delete, color: Colors.red),
                                       onPressed: () {
                                         _confirmarExclusao(colaborador);
                                       },
@@ -279,15 +282,15 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Color(0xFF008584),
+        backgroundColor: const Color(0xFF008584),
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => CadastroColaborador(),
+              builder: (context) => const CadastroColaborador(),
             ),
           );
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

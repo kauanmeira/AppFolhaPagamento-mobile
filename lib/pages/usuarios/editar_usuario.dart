@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, avoid_print
+
 import 'package:app_folha_pagamento/services/auth_middleware.dart';
 import 'package:app_folha_pagamento/services/usuario_service.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +8,7 @@ class EditarUsuario extends StatefulWidget {
   final int usuarioId;
   final void Function() recarregarDadosUsuarios;
 
-  EditarUsuario({
+  const EditarUsuario({
     required this.usuarioId,
     required this.recarregarDadosUsuarios,
     Key? key,
@@ -130,24 +132,24 @@ class _EditarUsuarioState extends State<EditarUsuario> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Editar Usuario'),
-        backgroundColor: Color(0xFF008584),
+        backgroundColor: const Color(0xFF008584),
         actions: [
           IconButton(
             onPressed: _editar,
-            icon: Icon(Icons.save),
+            icon: const Icon(Icons.save),
           ),
         ],
       ),
       body: Container(
-        padding: EdgeInsets.all(40),
+        padding: const EdgeInsets.all(40),
         color: Colors.white,
         child: ListView(
           children: [
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextFormField(
               keyboardType: TextInputType.name,
               controller: nomeController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Nome",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -156,11 +158,11 @@ class _EditarUsuarioState extends State<EditarUsuario> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.emailAddress,
               controller: emailController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Email",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -169,12 +171,12 @@ class _EditarUsuarioState extends State<EditarUsuario> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.text,
               obscureText: true,
               controller: senhaController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Senha",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -183,13 +185,13 @@ class _EditarUsuarioState extends State<EditarUsuario> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.text,
               obscureText: true,
               controller:
                   confirmarSenhaController, // Campo de confirmação de senha
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Confirmar Senha",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -198,11 +200,11 @@ class _EditarUsuarioState extends State<EditarUsuario> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Container(
               height: 60,
               alignment: Alignment.center,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -215,7 +217,7 @@ class _EditarUsuarioState extends State<EditarUsuario> {
               ),
               child: TextButton(
                 onPressed: _editar,
-                child: Text(
+                child: const Text(
                   "Salvar",
                   style: TextStyle(
                     color: Colors.white,

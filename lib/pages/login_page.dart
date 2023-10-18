@@ -1,13 +1,12 @@
+// ignore_for_file: library_private_types_in_public_api, avoid_print, use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:app_folha_pagamento/pages/home_page.dart';
-import 'package:app_folha_pagamento/pages/reset_password_page.dart';
-import 'package:app_folha_pagamento/pages/usuarios/cadastro_usuario.dart';
-import 'package:app_folha_pagamento/pages/usuarios/esqueci_senha.dart';
+
 import 'package:app_folha_pagamento/services/HttpService.dart';
 import 'package:app_folha_pagamento/services/usuario_service.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -37,7 +36,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _login() async {
-    print('Tentando fazer login...');
     String email = emailController.text;
     String senha = senhaController.text;
 
@@ -71,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
                   ? Colors.green
                   : Colors.red,
             )
-          : SnackBar(content: Text('Erro desconhecido')),
+          : const SnackBar(content: Text('Erro desconhecido')),
     );
   }
 
@@ -81,8 +79,8 @@ class _LoginPageState extends State<LoginPage> {
       body: Center(
         child: SingleChildScrollView(
           child: Container(
-            padding: EdgeInsets.all(20),
-            constraints: BoxConstraints(maxWidth: 400),
+            padding: const EdgeInsets.all(20),
+            constraints: const BoxConstraints(maxWidth: 400),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -95,12 +93,12 @@ class _LoginPageState extends State<LoginPage> {
                     fit: BoxFit.contain,
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 TextFormField(
                   controller: emailController,
                   autofocus: true,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: "E-mail",
                     prefixIcon: Icon(Icons.email),
                     focusedBorder: OutlineInputBorder(
@@ -110,12 +108,12 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 TextFormField(
                   controller: senhaController,
                   keyboardType: TextInputType.text,
                   obscureText: true,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: "Senha",
                     prefixIcon: Icon(Icons.lock),
                     focusedBorder: OutlineInputBorder(
@@ -125,49 +123,11 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EsqueciSenha(),
-                          ),
-                        );
-                      },
-                      child: Text(
-                        "Esqueceu a Senha?",
-                        style: TextStyle(
-                          color: Color(0xFF008584),
-                        ),
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CadastroUsuario(),
-                          ),
-                        );
-                      },
-                      child: Text(
-                        "Cadastrar Usuário",
-                        style: TextStyle(
-                          color: Color(0xFF008584),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Container(
                   height: 60,
                   width: double.infinity,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -180,8 +140,8 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   child: TextButton(
                     onPressed: _login,
-                    child: Text(
-                      "Login",
+                    child: const Text(
+                      "Entrar",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -190,7 +150,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
               ],
             ),
           ),

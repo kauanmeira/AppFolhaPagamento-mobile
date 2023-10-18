@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_null_comparison, deprecated_member_use, avoid_print
+
 import 'dart:convert';
 import 'dart:math';
 import 'package:app_folha_pagamento/models/Usuario.dart';
@@ -194,7 +196,7 @@ class UsuarioService {
     final smtpServer = gmail('seu_email@gmail.com', 'sua_senha');
 
     final message = Message()
-      ..from = Address('seu_email@gmail.com', 'Seu Nome')
+      ..from = const Address('seu_email@gmail.com', 'Seu Nome')
       ..recipients.add(email)
       ..subject = 'Código de Verificação'
       ..text = 'Seu código de verificação é: $codigo';

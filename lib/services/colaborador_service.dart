@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:app_folha_pagamento/models/Colaboradores.dart';
-import 'package:app_folha_pagamento/models/Usuario.dart';
 import 'package:http/http.dart' as http;
 
 class ColaboradorService {

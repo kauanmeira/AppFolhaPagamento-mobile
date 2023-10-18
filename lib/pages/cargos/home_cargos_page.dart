@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, avoid_print
+
 import 'package:app_folha_pagamento/models/Cargos.dart';
 import 'package:app_folha_pagamento/pages/cargos/cadastro_cargo.dart';
 import 'package:app_folha_pagamento/pages/cargos/editar_cargo.dart';
@@ -45,11 +47,11 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Deseja realmente excluir este cargo?'),
+          title: const Text('Deseja realmente excluir este cargo?'),
           content: Text('Cargo: ${cargo.nome}'),
           actions: <Widget>[
             TextButton(
-              child: Text('Sim'),
+              child: const Text('Sim'),
               onPressed: () async {
                 try {
                   String? mensagem =
@@ -75,13 +77,11 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
                 }
 
                 Navigator.of(context).pop();
-                setState(() {
-                  cargos = recarregarDadosCargos();
-                });
+                _recarregarCargos(); // Recarrega os dados de cargos
               },
             ),
             TextButton(
-              child: Text('Não'),
+              child: const Text('Não'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -92,12 +92,18 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
     );
   }
 
+  void _recarregarCargos() {
+    setState(() {
+      cargos = recarregarDadosCargos();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cargos'),
-        backgroundColor: Color(0xFF008584),
+        backgroundColor: const Color(0xFF008584),
         leading: BackButton(
           onPressed: () {
             Navigator.of(context).pushAndRemoveUntil(
@@ -108,6 +114,14 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
             );
           },
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              _recarregarCargos(); // Atualiza os dados da visualização
+            },
+            icon: const Icon(Icons.refresh), // Ícone de atualização
+          ),
+        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,11 +131,11 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
               future: cargos,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CustomLoadingIndicator(); // Indicador de progresso personalizado
                 } else if (snapshot.hasError) {
                   return Text(snapshot.error.toString());
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(
+                  return const Center(
                     child: Text('Nenhum dado disponível'),
                   );
                 } else {
@@ -132,14 +146,14 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
                       return Card(
                         elevation: 2,
                         margin:
-                            EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                            const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                         child: ListTile(
                           title: Text(cargo.nome!),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
-                                icon: Icon(Icons.edit),
+                                icon: const Icon(Icons.edit),
                                 onPressed: () {
                                   Navigator.of(context)
                                       .push(
@@ -147,7 +161,7 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
                                           builder: (context) => EditarCargo(
                                             cargoId: cargo.id!,
                                             recarregarDadosCargos:
-                                                recarregarDadosCargos,
+                                                _recarregarCargos, // Passa a função de recarga
                                           ),
                                         ),
                                       )
@@ -155,7 +169,7 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
                                 },
                               ),
                               IconButton(
-                                icon: Icon(Icons.delete, color: Colors.red),
+                                icon: const Icon(Icons.delete, color: Colors.red),
                                 onPressed: () {
                                   _confirmarExclusao(cargo);
                                 },
@@ -173,19 +187,42 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Color(0xFF008584),
+        backgroundColor: const Color(0xFF008584),
         onPressed: () {
           Navigator.of(context)
               .push(
             MaterialPageRoute(
-              builder: (context) => CadastroCargo(),
+              builder: (context) => const CadastroCargo(),
             ),
           )
               .then((value) {
-            recarregarDadosCargos();
+            _recarregarCargos(); // Recarrega os dados de cargos
           });
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+class CustomLoadingIndicator extends StatelessWidget {
+  const CustomLoadingIndicator({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF008584)),
+          ),
+          SizedBox(height: 8),
+          Text(
+            'Carregando...',
+            style: TextStyle(color: Color(0xFF008584)),
+          ),
+        ],
       ),
     );
   }

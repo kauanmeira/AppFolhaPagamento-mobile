@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:app_folha_pagamento/models/Cargos.dart';
 import 'package:app_folha_pagamento/models/Holerites.dart';
+import 'package:app_folha_pagamento/models/Tipos_Holerite.dart';
 import 'package:http/http.dart' as http;
 
 class HoleriteService {
@@ -25,6 +25,30 @@ class HoleriteService {
       }
     } else {
       throw Exception('Erro, não foi possível carregar o Holerite');
+    }
+  }
+
+  Future<List<TiposHolerite>> obterTiposHolerite(String token) async {
+    var url = Uri.parse('$baseUrl/tiposholerite');
+    var response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      if (response.body.isNotEmpty) {
+        List listaTiposHolerite = json.decode(response.body);
+        return listaTiposHolerite
+            .map((json) => TiposHolerite.fromJson(json))
+            .toList();
+      } else {
+        return <TiposHolerite>[];
+      }
+    } else {
+      throw Exception('Erro, não foi possível carregar os tipos de holerite');
     }
   }
 

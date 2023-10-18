@@ -1,9 +1,10 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
 import 'package:app_folha_pagamento/models/Holerites.dart';
 import 'package:app_folha_pagamento/services/auth_middleware.dart';
 import 'package:app_folha_pagamento/services/holerite_service.dart';
 import 'package:app_folha_pagamento/services/usuario_service.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class DetalhesHoleritePage extends StatelessWidget {
   final Holerites holerite;
@@ -11,7 +12,10 @@ class DetalhesHoleritePage extends StatelessWidget {
   final HoleriteService holeriteService = HoleriteService();
   final AuthMiddleware authMiddleware = AuthMiddleware();
 
-  DetalhesHoleritePage({required this.holerite});
+  DetalhesHoleritePage({
+    Key? key,
+    required this.holerite,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,17 +24,17 @@ class DetalhesHoleritePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Holerite',
           style: TextStyle(
             fontSize: 24.0,
           ),
         ),
-        backgroundColor: Color(0xFF008584),
+        backgroundColor: const Color(0xFF008584),
       ),
       body: Container(
-        padding: EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
+        padding: const EdgeInsets.all(16.0),
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [Color(0xFF008584), Color(0xFF005050)],
             begin: Alignment.topCenter,
@@ -46,11 +50,11 @@ class DetalhesHoleritePage extends StatelessWidget {
                 future: _obterNomeColaborador(holerite.colaboradorId!),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return const CircularProgressIndicator();
                   } else if (snapshot.hasError) {
                     return Text(
                       'Erro ao obter nome do colaborador: ${snapshot.error}',
-                      style: TextStyle(fontSize: 18.0, color: Colors.white),
+                      style: const TextStyle(fontSize: 18.0, color: Colors.white),
                     );
                   } else {
                     final nomeColaborador =
@@ -96,7 +100,7 @@ class DetalhesHoleritePage extends StatelessWidget {
 
   Widget _buildInfoRow(String label, String value) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -104,19 +108,19 @@ class DetalhesHoleritePage extends StatelessWidget {
             flex: 2,
             child: Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18.0,
                 color: Colors.white,
               ),
             ),
           ),
-          SizedBox(width: 16.0), // Espaço entre os campos
+          const SizedBox(width: 16.0), // Espaço entre os campos
           Flexible(
             flex: 3,
             child: Text(
               value,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 18.0,
                 color: Colors.white,
               ),

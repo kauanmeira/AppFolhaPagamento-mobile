@@ -1,3 +1,6 @@
+// ignore_for_file: library_private_types_in_public_api, avoid_print, use_build_context_synchronously
+
+import 'package:app_folha_pagamento/models/Tipos_Holerite.dart';
 import 'package:app_folha_pagamento/pages/holerites/home_holerites_page.dart';
 import 'package:app_folha_pagamento/services/auth_middleware.dart';
 import 'package:flutter/material.dart';
@@ -19,9 +22,13 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
   final ColaboradorService colaboradorService = ColaboradorService();
   final UsuarioService usuarioService = UsuarioService();
   final AuthMiddleware authMiddleware = AuthMiddleware();
+  int? selectedTiposHoleriteId;
 
+  // Listas de objetos
   late List<Colaboradores> colaboradores = [];
   List<Holerites> holerites = [];
+  List<TiposHolerite> tiposHoleriteList = [];
+
   int colaboradorId = 0;
   int mes = 1;
   int ano = DateTime.now().year;
@@ -35,6 +42,7 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
   @override
   void initState() {
     super.initState();
+    _carregarTiposHolerite();
     _carregarColaboradores();
     _carregarHolerites();
     authMiddleware.checkAuthAndNavigate(context);
@@ -67,10 +75,34 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
     }
   }
 
+  Future<void> _carregarTiposHolerite() async {
+    String? token = await usuarioService.getToken();
+    try {
+      final tiposHolerite = await holeriteService.obterTiposHolerite(token!);
+      setState(() {
+        tiposHoleriteList =
+            tiposHolerite; // Corrigido para atribuir tiposHolerite
+      });
+    } catch (error) {
+      print('Erro ao carregar tipos de holerite: $error');
+    }
+  }
+
   Future<void> _gerarHolerite() async {
     String? token = await usuarioService.getToken();
 
     try {
+      print('Dados a serem enviados:');
+      print('Colaborador ID: $colaboradorId');
+      print('Ano: $ano');
+      print('Mês: $mes');
+      print('Horas Normais: $horasNormais');
+      print('Horas Extras Habilitadas: $horasExtrasEnabled');
+      if (horasExtrasEnabled) {
+        print('Horas Extras: $horasExtras');
+      }
+      print('Tipo de Holerite ID: $selectedTiposHoleriteId');
+
       final String responseMessage = await holeriteService.gerarHolerite(
         colaboradorId: colaboradorId,
         mes: mes,
@@ -78,7 +110,8 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
         horasNormais: horasNormais,
         horasExtrasEnabled: horasExtrasEnabled,
         horasExtras: horasExtras,
-        tipo: tipo,
+        tipo:
+            selectedTiposHoleriteId!, // Usar a variável selectedTiposHoleriteId
         token: token!,
       );
 
@@ -99,7 +132,7 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
         // Redirecionar para a HomeHoleritesPage se o holerite for gerado com sucesso
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => HomeHoleritesPage(),
+            builder: (context) => const HomeHoleritesPage(),
           ),
         );
       }
@@ -118,14 +151,14 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Geração de Holerite'),
-        backgroundColor: Color(0xFF008584),
+        title: const Text('Geração de Holerite'),
+        backgroundColor: const Color(0xFF008584),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) => HomeHoleritesPage(),
+                builder: (context) => const HomeHoleritesPage(),
               ),
             );
           },
@@ -143,14 +176,14 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
                 height: 128,
               ),
             ),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
             Row(
               children: <Widget>[
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Colaborador',
                         style: TextStyle(
                           color: Colors.black38,
@@ -163,10 +196,11 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
                         items: colaboradores.map((colaborador) {
                           return DropdownMenuItem<int>(
                             value: colaborador.id,
-                            child: Container(
+                            child: SizedBox(
                               width: 250, // Largura desejada
                               child: Text(
-                                  '${colaborador.nome} ${colaborador.sobrenome}'),
+                                '${colaborador.nome} ${colaborador.sobrenome}',
+                              ),
                             ),
                           );
                         }).toList(),
@@ -181,7 +215,7 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
                 ),
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Row(
               children: <Widget>[
                 Expanded(
@@ -191,7 +225,7 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
                       TextFormField(
                         keyboardType: TextInputType.number,
                         controller: anoController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: "Ano",
                           labelStyle: TextStyle(
                             color: Colors.black38,
@@ -203,12 +237,12 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
                     ],
                   ),
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Mês',
                         style: TextStyle(
                           color: Colors.black38,
@@ -222,7 +256,7 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
                             (int index) {
                           return DropdownMenuItem<int>(
                             value: index + 1,
-                            child: Container(
+                            child: SizedBox(
                               width: 100, // Largura desejada
                               child: Text(_nomeMes(index + 1)),
                             ),
@@ -239,10 +273,10 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
                 ),
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               controller: horasNormaisController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Horas normais",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -262,7 +296,7 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
                 });
               },
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Row(
               children: <Widget>[
                 Checkbox(
@@ -273,7 +307,7 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
                     });
                   },
                 ),
-                Text('Horas Extras'),
+                const Text('Horas Extras'),
               ],
             ),
             if (horasExtrasEnabled)
@@ -285,10 +319,21 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
                   });
                 },
               ),
-            SizedBox(height: 10),
-            TextFormField(
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
+            const SizedBox(height: 10),
+            DropdownButtonFormField<int>(
+              value: selectedTiposHoleriteId,
+              onChanged: (int? tiposHoleriteId) {
+                setState(() {
+                  selectedTiposHoleriteId = tiposHoleriteId;
+                });
+              },
+              items: tiposHoleriteList.map((TiposHolerite tiposHolerite) {
+                return DropdownMenuItem<int>(
+                  value: tiposHolerite.id,
+                  child: Text(tiposHolerite.tipoHolerite!),
+                );
+              }).toList(),
+              decoration: const InputDecoration(
                 labelText: "Tipo",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -296,17 +341,12 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
                   fontSize: 20,
                 ),
               ),
-              onChanged: (value) {
-                setState(() {
-                  tipo = int.tryParse(value) ?? 0;
-                });
-              },
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Container(
               height: 60,
               alignment: Alignment.center,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -319,7 +359,7 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
               ),
               child: TextButton(
                 onPressed: _gerarHolerite,
-                child: Text(
+                child: const Text(
                   "Salvar",
                   style: TextStyle(
                     color: Colors.white,

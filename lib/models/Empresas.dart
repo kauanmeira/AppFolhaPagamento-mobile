@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 class Empresas {
   int? id;
   String? cnpj;
@@ -16,12 +18,12 @@ class Empresas {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['cnpj'] = this.cnpj;
-    data['razaoSocial'] = this.razaoSocial;
-    data['nomeFantasia'] = this.nomeFantasia;
-    data['cep'] = this.cep;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['cnpj'] = cnpj;
+    data['razaoSocial'] = razaoSocial;
+    data['nomeFantasia'] = nomeFantasia;
+    data['cep'] = cep;
     return data;
   }
 }

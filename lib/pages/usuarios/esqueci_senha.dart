@@ -1,4 +1,5 @@
-import 'package:app_folha_pagamento/pages/usuarios/confirmar_codigo_redefinicao_senha_screen.dart';
+// ignore_for_file: use_key_in_widget_constructors, avoid_print
+
 import 'package:app_folha_pagamento/services/usuario_service.dart';
 import 'package:flutter/material.dart';
 
@@ -10,21 +11,21 @@ class EsqueciSenha extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Solicitar Redefinição de Senha'),
+        title: const Text('Solicitar Redefinição de Senha'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             TextField(
               controller: emailController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'E-mail',
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
                 final email = emailController.text;
@@ -52,7 +53,7 @@ class EsqueciSenha extends StatelessWidget {
                 );
                 */
               },
-              child: Text('Enviar'),
+              child: const Text('Enviar'),
             ),
           ],
         ),

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:app_folha_pagamento/pages/login_page.dart';
 import 'package:app_folha_pagamento/services/usuario_service.dart';
 import 'package:flutter/material.dart';
@@ -23,19 +25,19 @@ class AuthMiddleware {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Sessão Expirou'),
-            content: Text('Sua sessão expirou. Faça login novamente.'),
+            title: const Text('Sessão Expirou'),
+            content: const Text('Sua sessão expirou. Faça login novamente.'),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => LoginPage(),
+                      builder: (context) => const LoginPage(),
                     ),
                   );
                 },
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           );

@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable, use_key_in_widget_constructors, library_private_types_in_public_api, use_build_context_synchronously
+
 import 'dart:io';
 import 'package:app_folha_pagamento/pages/login_page.dart';
 import 'package:app_folha_pagamento/services/HttpService.dart';
@@ -62,7 +64,6 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
   }
 
   Future<void> _cadastrar() async {
-    print('Cadastrando...');
     String nome = nomeController.text;
     String email = emailController.text;
     String senha = senhaController.text;
@@ -102,7 +103,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => LoginPage(),
+            builder: (context) => const LoginPage(),
           ),
         );
       } catch (error) {
@@ -120,7 +121,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                   ? Colors.green
                   : Colors.red,
             )
-          : SnackBar(content: Text('Erro desconhecido')),
+          : const SnackBar(content: Text('Erro desconhecido')),
     );
   }
 
@@ -129,10 +130,10 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cadastro de usuário'),
-        backgroundColor: Color(0xFF008584),
+        backgroundColor: const Color(0xFF008584),
       ),
       body: Container(
-        padding: EdgeInsets.all(40),
+        padding: const EdgeInsets.all(40),
         color: Colors.white,
         child: ListView(
           children: [
@@ -143,12 +144,12 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                 height: 128,
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextFormField(
               autofocus: true,
               keyboardType: TextInputType.name,
               controller: nomeController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Nome",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -157,11 +158,11 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.emailAddress,
               controller: emailController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "E-mail",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -170,14 +171,14 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.text,
               controller: senhaController,
               obscureText: _obscureTextSenha,
               decoration: InputDecoration(
                 labelText: "Senha",
-                labelStyle: TextStyle(
+                labelStyle: const TextStyle(
                   color: Colors.black38,
                   fontWeight: FontWeight.w400,
                   fontSize: 20,
@@ -195,14 +196,14 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.text,
               controller: confirmarSenhaController,
               obscureText: _obscureTextConfirmarSenha,
               decoration: InputDecoration(
                 labelText: "Confirmar Senha",
-                labelStyle: TextStyle(
+                labelStyle: const TextStyle(
                   color: Colors.black38,
                   fontWeight: FontWeight.w400,
                   fontSize: 20,
@@ -222,7 +223,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             DropdownButtonFormField<String>(
               value: selectedUserRole,
               onChanged: (newValue) {
@@ -230,7 +231,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                   selectedUserRole = newValue;
                 });
               },
-              items: [
+              items: const [
                 DropdownMenuItem(
                   value: 'Admin',
                   child: Text('Admin'),
@@ -240,7 +241,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                   child: Text('User'),
                 ),
               ],
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Tipo de Usuário",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -249,11 +250,11 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Container(
               height: 60,
               alignment: Alignment.center,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -266,7 +267,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
               ),
               child: TextButton(
                 onPressed: _cadastrar,
-                child: Text(
+                child: const Text(
                   "Salvar",
                   style: TextStyle(
                     color: Colors.white,

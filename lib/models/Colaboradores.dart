@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 class Colaboradores {
   int? id;
   String? cpf;
@@ -63,26 +65,26 @@ class Colaboradores {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['cpf'] = this.cpf;
-    data['nome'] = this.nome;
-    data['sobrenome'] = this.sobrenome;
-    data['salarioBase'] = this.salarioBase;
-    data['dataNascimento'] = this.dataNascimento;
-    data['dataAdmissao'] = this.dataAdmissao;
-    data['dataDemissao'] = this.dataDemissao;
-    data['ativo'] = this.ativo;
-    data['dependentes'] = this.dependentes;
-    data['filhos'] = this.filhos;
-    data['cargoId'] = this.cargoId;
-    data['empresaId'] = this.empresaId;
-    data['cep'] = this.cep;
-    data['logradouro'] = this.logradouro;
-    data['numero'] = this.numero;
-    data['bairro'] = this.bairro;
-    data['cidade'] = this.cidade;
-    data['estado'] = this.estado;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['cpf'] = cpf;
+    data['nome'] = nome;
+    data['sobrenome'] = sobrenome;
+    data['salarioBase'] = salarioBase;
+    data['dataNascimento'] = dataNascimento;
+    data['dataAdmissao'] = dataAdmissao;
+    data['dataDemissao'] = dataDemissao;
+    data['ativo'] = ativo;
+    data['dependentes'] = dependentes;
+    data['filhos'] = filhos;
+    data['cargoId'] = cargoId;
+    data['empresaId'] = empresaId;
+    data['cep'] = cep;
+    data['logradouro'] = logradouro;
+    data['numero'] = numero;
+    data['bairro'] = bairro;
+    data['cidade'] = cidade;
+    data['estado'] = estado;
 
     return data;
   }

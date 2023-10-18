@@ -9,11 +9,11 @@ class Holerites {
   int? ano;
   double? horasNormais;
   double? horasExtras;
-  int? tipo;
   double? salarioLiquido;
   double? salarioBruto;
   double? descontoINSS;
   double? descontoIRRF;
+  int? tipo;
   int? dependentesHolerite;
   Colaboradores? colaborador;
 
@@ -34,9 +34,9 @@ class Holerites {
     colaboradorId = json['colaboradorId'];
     mes = json['mes'];
     ano = json['ano'];
-    salarioBruto = json['salarioBruto'];
-    descontoINSS = json['descontoINSS'];
-    descontoIRRF = json['descontoIRRF'];
+    salarioBruto = json['salarioBruto']?.toDouble() ?? 0.0;
+    descontoINSS = json['descontoINSS']?.toDouble() ?? 0.0;
+    descontoIRRF = json['descontoIRRF']?.toDouble() ?? 0.0;
     dependentesHolerite = json['dependentesHolerite'];
 
     if (json['horasNormais'] != null && json['horasNormais'] is num) {
@@ -53,11 +53,7 @@ class Holerites {
 
     tipo = json['tipo'];
 
-    if (json['salarioLiquido'] != null && json['salarioLiquido'] is num) {
-      salarioLiquido = (json['salarioLiquido'] as num).toDouble();
-    } else {
-      salarioLiquido = 0.0;
-    }
+    salarioLiquido = json['salarioLiquido']?.toDouble() ?? 0.0;
 
     colaborador =
         Colaboradores.fromJson(json['colaborador'] ?? <String, dynamic>{});

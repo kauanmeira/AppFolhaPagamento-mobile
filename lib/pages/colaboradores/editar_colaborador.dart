@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:app_folha_pagamento/models/Cargos.dart';
@@ -14,7 +16,7 @@ class EditarColaborador extends StatefulWidget {
   final int colaboradorId;
   final void Function() recarregarDadosColaborador;
 
-  EditarColaborador({
+  const EditarColaborador({
     required this.colaboradorId,
     required this.recarregarDadosColaborador,
     Key? key,
@@ -218,7 +220,7 @@ class _EditarColaboradorState extends State<EditarColaborador> {
     } catch (error) {
       print('Erro ao buscar o endereço: $error');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Erro ao buscar o endereço'),
           backgroundColor: Colors.red,
         ),
@@ -292,24 +294,24 @@ class _EditarColaboradorState extends State<EditarColaborador> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Editar Colaborador'),
-        backgroundColor: Color(0xFF008584),
+        backgroundColor: const Color(0xFF008584),
         actions: [
           IconButton(
             onPressed: _editar,
-            icon: Icon(Icons.save),
+            icon: const Icon(Icons.save),
           ),
         ],
       ),
       body: Container(
-        padding: EdgeInsets.all(40),
+        padding: const EdgeInsets.all(40),
         color: Colors.white,
         child: ListView(
           children: [
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextFormField(
               keyboardType: TextInputType.number,
               controller: cpfController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "CPF",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -318,11 +320,11 @@ class _EditarColaboradorState extends State<EditarColaborador> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.name,
               controller: nomeController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Nome",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -331,11 +333,11 @@ class _EditarColaboradorState extends State<EditarColaborador> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.name,
               controller: sobrenomeController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Sobrenome",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -344,11 +346,11 @@ class _EditarColaboradorState extends State<EditarColaborador> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.number,
               controller: salarioBaseController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Salário Base",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -357,11 +359,11 @@ class _EditarColaboradorState extends State<EditarColaborador> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.number,
               controller: dataNascimentoController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Data de Nascimento",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -370,11 +372,11 @@ class _EditarColaboradorState extends State<EditarColaborador> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.number,
               controller: dataAdmissaoController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Data de Admissão",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -383,11 +385,11 @@ class _EditarColaboradorState extends State<EditarColaborador> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.number,
               controller: dependentesController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Dependentes",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -396,11 +398,11 @@ class _EditarColaboradorState extends State<EditarColaborador> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.number,
               controller: filhosController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Filhos",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -418,7 +420,7 @@ class _EditarColaboradorState extends State<EditarColaborador> {
               },
               items: [
                 if (cargosList.isEmpty)
-                  DropdownMenuItem<int>(
+                  const DropdownMenuItem<int>(
                     value: null,
                     child: Text("Nenhum cargo disponível"),
                   )
@@ -430,7 +432,7 @@ class _EditarColaboradorState extends State<EditarColaborador> {
                     );
                   }).toList(),
               ],
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Cargo",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -448,7 +450,7 @@ class _EditarColaboradorState extends State<EditarColaborador> {
               },
               items: [
                 if (empresaList.isEmpty)
-                  DropdownMenuItem<int>(
+                  const DropdownMenuItem<int>(
                     value: null,
                     child: Text("Nenhuma empresa disponível"),
                   )
@@ -460,7 +462,7 @@ class _EditarColaboradorState extends State<EditarColaborador> {
                     );
                   }).toList(),
               ],
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Empresa",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -469,11 +471,11 @@ class _EditarColaboradorState extends State<EditarColaborador> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.number,
               controller: cepController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "CEP",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -488,11 +490,11 @@ class _EditarColaboradorState extends State<EditarColaborador> {
                 }
               },
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.text,
               controller: logradouroController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Logradouro",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -501,11 +503,11 @@ class _EditarColaboradorState extends State<EditarColaborador> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.text,
               controller: numeroController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Número",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -514,11 +516,11 @@ class _EditarColaboradorState extends State<EditarColaborador> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.text,
               controller: bairroController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Bairro",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -527,11 +529,11 @@ class _EditarColaboradorState extends State<EditarColaborador> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.text,
               controller: cidadeController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Cidade",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -540,11 +542,11 @@ class _EditarColaboradorState extends State<EditarColaborador> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextFormField(
               keyboardType: TextInputType.text,
               controller: estadoController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Estado",
                 labelStyle: TextStyle(
                   color: Colors.black38,
@@ -553,11 +555,11 @@ class _EditarColaboradorState extends State<EditarColaborador> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Container(
               height: 60,
               alignment: Alignment.center,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -570,7 +572,7 @@ class _EditarColaboradorState extends State<EditarColaborador> {
               ),
               child: TextButton(
                 onPressed: _editar,
-                child: Text(
+                child: const Text(
                   "Salvar",
                   style: TextStyle(
                     color: Colors.white,

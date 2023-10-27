@@ -1,6 +1,5 @@
-// ignore_for_file: unnecessary_null_comparison, avoid_print, use_build_context_synchronously
+// ignore_for_file: unnecessary_null_comparison, use_build_context_synchronously, avoid_print, use_key_in_widget_constructors
 
-import 'package:app_folha_pagamento/pages/cargos/home_cargos_page.dart';
 import 'package:flutter/material.dart';
 import 'package:app_folha_pagamento/models/Holerites.dart';
 import 'package:app_folha_pagamento/pages/holerites/detalhes_holerite_page.dart';
@@ -188,7 +187,7 @@ class _HomeHoleritesPageState extends State<HomeHoleritesPage> {
               future: holerites,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CustomLoadingIndicator();
+                  return CustomLoadingIndicator();
                 } else if (snapshot.hasError) {
                   return Center(
                     child: Text(snapshot.error.toString()),
@@ -293,3 +292,12 @@ final List<String> meses = [
   'Novembro',
   'Dezembro',
 ];
+
+class CustomLoadingIndicator extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+}

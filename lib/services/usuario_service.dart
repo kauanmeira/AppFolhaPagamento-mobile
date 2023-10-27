@@ -186,6 +186,19 @@ class UsuarioService {
     }
   }
 
+  Future<int?> getUserPermission() async {
+    String? token = await getToken();
+
+    if (token != null) {
+      final Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+      final int? userPermission = decodedToken['permissionId'];
+
+      return userPermission;
+    }
+
+    return null;
+  }
+
   String generateVerificationCode() {
     // Gere um código de verificação de 4 dígitos
     final random = Random();

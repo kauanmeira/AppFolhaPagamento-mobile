@@ -114,14 +114,6 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
             );
           },
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              _recarregarCargos(); // Atualiza os dados da visualização
-            },
-            icon: const Icon(Icons.refresh), // Ícone de atualização
-          ),
-        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,8 +137,8 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
                       Cargos cargo = snapshot.data![index];
                       return Card(
                         elevation: 2,
-                        margin:
-                            const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 16),
                         child: ListTile(
                           title: Text(cargo.nome!),
                           trailing: Row(
@@ -157,19 +149,22 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
                                 onPressed: () {
                                   Navigator.of(context)
                                       .push(
-                                        MaterialPageRoute(
-                                          builder: (context) => EditarCargo(
-                                            cargoId: cargo.id!,
-                                            recarregarDadosCargos:
-                                                _recarregarCargos, // Passa a função de recarga
-                                          ),
-                                        ),
-                                      )
-                                      .then((value) {});
+                                    MaterialPageRoute(
+                                      builder: (context) => EditarCargo(
+                                        cargoId: cargo.id!,
+                                        recarregarDadosCargos:
+                                            _recarregarCargos, // Passa a função de recarga
+                                      ),
+                                    ),
+                                  )
+                                      .then((value) {
+                                    _recarregarCargos(); // Recarrega os dados após edição
+                                  });
                                 },
                               ),
                               IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.red),
+                                icon:
+                                    const Icon(Icons.delete, color: Colors.red),
                                 onPressed: () {
                                   _confirmarExclusao(cargo);
                                 },
@@ -196,7 +191,7 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
             ),
           )
               .then((value) {
-            _recarregarCargos(); // Recarrega os dados de cargos
+            _recarregarCargos(); // Recarrega os dados de cargos após cadastro
           });
         },
         child: const Icon(Icons.add),

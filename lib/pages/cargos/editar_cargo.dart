@@ -7,8 +7,7 @@ import 'package:app_folha_pagamento/services/cargo_service.dart';
 
 class EditarCargo extends StatefulWidget {
   final int cargoId;
-  final void Function() recarregarDadosCargos;
-
+  final VoidCallback recarregarDadosCargos;
   const EditarCargo({
     required this.cargoId,
     required this.recarregarDadosCargos,

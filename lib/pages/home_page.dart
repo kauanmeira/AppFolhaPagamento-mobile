@@ -1,5 +1,6 @@
 // ignore_for_file: use_key_in_widget_constructors
 
+import 'package:flutter/material.dart';
 import 'package:app_folha_pagamento/pages/cargos/home_cargos_page.dart';
 import 'package:app_folha_pagamento/pages/colaboradores/home_colaboradores_page.dart';
 import 'package:app_folha_pagamento/pages/holerites/home_holerites_page.dart';
@@ -7,7 +8,6 @@ import 'package:app_folha_pagamento/pages/login_page.dart';
 import 'package:app_folha_pagamento/pages/usuarios/home_usuarios_page.dart';
 import 'package:app_folha_pagamento/services/auth_middleware.dart';
 import 'package:app_folha_pagamento/services/usuario_service.dart';
-import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
   final UsuarioService usuarioService = UsuarioService();
@@ -67,163 +67,74 @@ class HomePage extends StatelessWidget {
         padding: const EdgeInsets.only(top: 100, left: 30, right: 30),
         child: ListView(
           children: [
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const HomeColaboradoresPage(),
-                  ),
-                );
-              },
-              child: Container(
-                height: 70,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    stops: [0.3, 1],
-                    colors: [
-                      Color(0xFF008584),
-                      Color(0xFF007C70),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(12),
-                  ),
-                ),
-                child: const Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    "Colaboradores",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
+            buildContainerWithIcon(
+              context,
+              Icons.people,
+              "Colaboradores",
+              const HomeColaboradoresPage(),
             ),
             const SizedBox(height: 30),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const HomeCargosPage(),
-                  ),
-                );
-              },
-              child: Container(
-                height: 70,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    stops: [0.3, 1],
-                    colors: [
-                      Color(0xFF008584),
-                      Color(0xFF007C70),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(12),
-                  ),
-                ),
-                child: const Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    "Cargos",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const HomeUsuariosPage(),
-                  ),
-                );
-              },
-              child: Container(
-                height: 70,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    stops: [0.3, 1],
-                    colors: [
-                      Color(0xFF008584),
-                      Color(0xFF007C70),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                ),
-                child: const Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    "Usuários",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
+            buildContainerWithIcon(
+              context,
+              Icons.business,
+              "Cargos",
+              const HomeCargosPage(),
             ),
             const SizedBox(height: 30),
-            InkWell(
-              onTap: () {
-                {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const HomeHoleritesPage(),
-                    ),
-                  );
-                }
-              },
-              child: Container(
-                height: 70,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    stops: [0.3, 1],
-                    colors: [
-                      Color(0xFF008584),
-                      Color(0xFF007C70),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                ),
-                child: const Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    "Holerites",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+            buildContainerWithIcon(
+              context,
+              Icons.person,
+              "Usuários",
+              const HomeUsuariosPage(),
+            ),
+            const SizedBox(height: 30),
+            buildContainerWithIcon(
+              context,
+              Icons.attach_money_sharp,
+              "Holerites",
+              const HomeHoleritesPage(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildContainerWithIcon(
+      BuildContext context, IconData icon, String text, Widget route) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => route,
+          ),
+        );
+      },
+      child: Container(
+        height: 70,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            stops: [0.3, 1],
+            colors: [Color(0xFF008584), Color(0xFF007C70)],
+          ),
+          borderRadius: BorderRadius.all(
+            Radius.circular(12),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: Colors.white),
+            const SizedBox(width: 10),
+            Text(
+              text,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ],

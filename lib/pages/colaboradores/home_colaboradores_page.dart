@@ -80,9 +80,7 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
                 }
 
                 Navigator.of(context).pop();
-                setState(() {
-                  colaboradores = recarregarDadosColaborador();
-                });
+                _recarregarColaboradores(); // Recarrega os dados de colaboradores
               },
             ),
             TextButton(
@@ -136,9 +134,7 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
                 }
 
                 Navigator.of(context).pop();
-                setState(() {
-                  colaboradores = recarregarDadosColaborador();
-                });
+                _recarregarColaboradores(); // Recarrega os dados de colaboradores
               },
             ),
             TextButton(
@@ -151,6 +147,12 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
         );
       },
     );
+  }
+
+  void _recarregarColaboradores() {
+    setState(() {
+      colaboradores = recarregarDadosColaborador();
+    });
   }
 
   @override
@@ -212,8 +214,8 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
                       Colaboradores colaborador = snapshot.data![index];
                       return Card(
                         elevation: 2,
-                        margin:
-                            const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 16),
                         child: ListTile(
                           title: Row(
                             children: [
@@ -244,24 +246,25 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
                                       } else {
                                         Navigator.of(context)
                                             .push(
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    EditarColaborador(
-                                                  colaboradorId:
-                                                      colaborador.id!,
-                                                  recarregarDadosColaborador:
-                                                      recarregarDadosColaborador,
-                                                ),
-                                              ),
-                                            )
-                                            .then((value) {});
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                EditarColaborador(
+                                              colaboradorId: colaborador.id!,
+                                              recarregarDadosColaborador:
+                                                  _recarregarColaboradores,
+                                            ),
+                                          ),
+                                        )
+                                            .then((value) {
+                                          _recarregarColaboradores();
+                                        });
                                       }
                                     },
                                   ),
                                   if (!mostrarInativos)
                                     IconButton(
-                                      icon:
-                                          const Icon(Icons.delete, color: Colors.red),
+                                      icon: const Icon(Icons.delete,
+                                          color: Colors.red),
                                       onPressed: () {
                                         _confirmarExclusao(colaborador);
                                       },
@@ -284,13 +287,40 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color(0xFF008584),
         onPressed: () {
-          Navigator.of(context).push(
+          Navigator.of(context)
+              .push(
             MaterialPageRoute(
               builder: (context) => const CadastroColaborador(),
             ),
-          );
+          )
+              .then((value) {
+            _recarregarColaboradores();
+          });
         },
         child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+class CustomLoadingIndicator extends StatelessWidget {
+  const CustomLoadingIndicator({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF008584)),
+          ),
+          SizedBox(height: 8),
+          Text(
+            'Carregando...',
+            style: TextStyle(color: Color(0xFF008584)),
+          ),
+        ],
       ),
     );
   }

@@ -28,6 +28,7 @@ class DetalhesHoleritePage extends StatelessWidget {
           'Holerite',
           style: TextStyle(
             fontSize: 24.0,
+            color: Colors.white, // Altere a cor do texto para branca
           ),
         ),
         backgroundColor: const Color(0xFF008584),
@@ -46,7 +47,6 @@ class DetalhesHoleritePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               FutureBuilder<String>(
-                // Use um FutureBuilder para buscar o nome do colaborador
                 future: _obterNomeColaborador(holerite.colaboradorId!),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -54,7 +54,10 @@ class DetalhesHoleritePage extends StatelessWidget {
                   } else if (snapshot.hasError) {
                     return Text(
                       'Erro ao obter nome do colaborador: ${snapshot.error}',
-                      style: const TextStyle(fontSize: 18.0, color: Colors.white),
+                      style: const TextStyle(
+                        fontSize: 18.0,
+                        color: Colors.white,
+                      ),
                     );
                   } else {
                     final nomeColaborador =

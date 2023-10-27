@@ -14,8 +14,7 @@ import 'package:intl/intl.dart';
 
 class EditarColaborador extends StatefulWidget {
   final int colaboradorId;
-  final void Function() recarregarDadosColaborador;
-
+  final VoidCallback recarregarDadosColaborador;
   const EditarColaborador({
     required this.colaboradorId,
     required this.recarregarDadosColaborador,

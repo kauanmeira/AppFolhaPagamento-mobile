@@ -158,8 +158,8 @@ class _HomeUsuariosPageState extends State<HomeUsuariosPage> {
                       Usuario usuario = snapshot.data![index];
                       return Card(
                         elevation: 2,
-                        margin:
-                            const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 16),
                         child: ListTile(
                           title: Text(usuario.nome!),
                           subtitle: Text(usuario.email!),
@@ -183,7 +183,8 @@ class _HomeUsuariosPageState extends State<HomeUsuariosPage> {
                                 },
                               ),
                               IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.red),
+                                icon:
+                                    const Icon(Icons.delete, color: Colors.red),
                                 onPressed: () {
                                   _confirmarExclusao(usuario);
                                 },

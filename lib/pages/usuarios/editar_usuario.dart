@@ -23,7 +23,7 @@ class _EditarUsuarioState extends State<EditarUsuario> {
   TextEditingController emailController = TextEditingController();
   TextEditingController senhaController = TextEditingController();
   TextEditingController confirmarSenhaController =
-      TextEditingController(); // Campo de confirmação de senha
+      TextEditingController(); 
   String? feedbackMessage;
   final UsuarioService usuarioService = UsuarioService();
   final AuthMiddleware authMiddleware = AuthMiddleware();
@@ -49,10 +49,9 @@ class _EditarUsuarioState extends State<EditarUsuario> {
     String novoEmail = emailController.text;
     String novaSenha = senhaController.text;
     String confirmarSenha =
-        confirmarSenhaController.text; // Obtenha a confirmação de senha
+        confirmarSenhaController.text; 
 
     if (!isSenhasIguais(novaSenha, confirmarSenha)) {
-      // Verifique se as senhas coincidem
       setState(() {
         feedbackMessage = 'As senhas não coincidem.';
       });
@@ -62,7 +61,7 @@ class _EditarUsuarioState extends State<EditarUsuario> {
           backgroundColor: Colors.red,
         ),
       );
-      return; // Saia da função se as senhas não coincidirem
+      return; 
     }
     String? token = await usuarioService.getToken();
 
@@ -81,8 +80,8 @@ class _EditarUsuarioState extends State<EditarUsuario> {
         ),
       );
 
-      Navigator.of(context).pop(); // Fecha a página de edição
-      widget.recarregarDadosUsuarios(); // Chame a função de recarregamento
+      Navigator.of(context).pop(); 
+      widget.recarregarDadosUsuarios(); 
     } catch (error) {
       if (error is String) {
         setState(() {
@@ -114,7 +113,6 @@ class _EditarUsuarioState extends State<EditarUsuario> {
       senhaController.text = usuario.senha!;
     } catch (error) {
       print('Erro ao carregar detalhes do usuario: $error');
-      // Lidar com o erro, por exemplo, exibir uma mensagem ao usuário.
     }
   }
 
@@ -190,7 +188,7 @@ class _EditarUsuarioState extends State<EditarUsuario> {
               keyboardType: TextInputType.text,
               obscureText: true,
               controller:
-                  confirmarSenhaController, // Campo de confirmação de senha
+                  confirmarSenhaController, 
               decoration: const InputDecoration(
                 labelText: "Confirmar Senha",
                 labelStyle: TextStyle(

@@ -90,8 +90,7 @@ class _HomeUsuariosPageState extends State<HomeUsuariosPage> {
                     Navigator.of(context).pop();
 
                     if (usuario.id == userIdLoggedIn) {
-                      // Se o usuário logado foi excluído, você pode lidar com o redirecionamento
-                      // ou logout aqui, conforme necessário para o seu aplicativo.
+                   
                     } else {
                       recarregarDadosUsuarios();
                     }

@@ -64,7 +64,6 @@ class HoleriteService {
       );
 
       if (response.statusCode == 200) {
-        // Sucesso ao excluir o cargo (status 204 significa "No Content")
         return 'Holerite Deletado com sucesso';
       } else {
         throw 'Erro ao excluir o holerite. Código de status: ${response.statusCode}';
@@ -99,7 +98,7 @@ class HoleriteService {
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token', // Adicione o token ao cabeçalho
+          'Authorization': 'Bearer $token',
         },
         body: json.encode(data),
       );

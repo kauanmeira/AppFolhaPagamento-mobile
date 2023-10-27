@@ -149,7 +149,7 @@ class _EditarColaboradorState extends State<EditarColaborador> {
           novoNome,
           novoSobrenome,
           novoSalarioBase,
-          dataNascimentoFormatted, // Use as datas formatadas aqui
+          dataNascimentoFormatted, 
           dataAdmissaoFormatted,
           novoDependentes,
           novoFilhos,
@@ -174,8 +174,8 @@ class _EditarColaboradorState extends State<EditarColaborador> {
         ),
       );
 
-      Navigator.of(context).pop(); // Fecha a página de edição
-      widget.recarregarDadosColaborador(); // Chame a função de recarregamento
+      Navigator.of(context).pop(); 
+      widget.recarregarDadosColaborador(); 
     } catch (error) {
       if (error is String) {
         setState(() {
@@ -229,8 +229,7 @@ class _EditarColaboradorState extends State<EditarColaborador> {
 
   Future<void> _carregarCargos() async {
     String? token = await usuarioService
-        .getToken(); // Obtenha o token aqui, dependendo de como você o está gerenciando.
-
+        .getToken(); 
     try {
       final cargos = await cargoService.obterCargos(token!);
       setState(() {
@@ -258,7 +257,7 @@ class _EditarColaboradorState extends State<EditarColaborador> {
       String? token = await usuarioService.getToken();
       final colaborador = await colaboradorService.obterColaboradoresPorId(
         widget.colaboradorId,
-        token!, // Passando o token aqui
+        token!,
       );
 
       setState(() {
@@ -484,7 +483,6 @@ class _EditarColaboradorState extends State<EditarColaborador> {
               ),
               onChanged: (cep) {
                 if (cep.length == 8) {
-                  // Chama a função de busca de endereço quando o CEP tiver 8 dígitos
                   _buscarEnderecoPorCEP(cep);
                 }
               },

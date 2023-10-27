@@ -51,7 +51,6 @@ class ColaboradorService {
       );
 
       if (response.statusCode == 201) {
-        // Se o colaborador foi cadastrado com sucesso, você pode retornar uma mensagem
         return 'Colaborador cadastrado com sucesso';
       } else if (response.statusCode == 400) {
         final jsonResponse = json.decode(response.body);
@@ -194,12 +193,11 @@ class ColaboradorService {
         }),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token', // Adicione o token ao cabeçalho
+          'Authorization': 'Bearer $token', 
         },
       );
 
       if (response.statusCode == 200) {
-        // Lida com a resposta de sucesso, se necessário
       } else {
         throw 'Erro ao editar o colaborador. Código de status: ${response.statusCode}';
       }
@@ -222,7 +220,6 @@ class ColaboradorService {
       if (response.statusCode == 200) {
         return 'Colaborador Demitido com sucesso';
       } else {
-        // Verifique se a resposta contém uma mensagem de erro
         final responseBody = json.decode(response.body);
         final errorMessage = responseBody['message'] ?? 'Erro desconhecido';
         return errorMessage;
@@ -246,7 +243,6 @@ class ColaboradorService {
       if (response.statusCode == 200) {
         return 'Colaborador Ativado com sucesso';
       } else {
-        // Verifique se a resposta contém uma mensagem de erro
         final responseBody = json.decode(response.body);
         final errorMessage = responseBody['message'] ?? 'Erro desconhecido';
         return errorMessage;

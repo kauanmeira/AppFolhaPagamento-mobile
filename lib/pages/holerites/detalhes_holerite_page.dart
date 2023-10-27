@@ -28,7 +28,7 @@ class DetalhesHoleritePage extends StatelessWidget {
           'Holerite',
           style: TextStyle(
             fontSize: 24.0,
-            color: Colors.white, // Altere a cor do texto para branca
+            color: Colors.white, 
           ),
         ),
         backgroundColor: const Color(0xFF008584),
@@ -118,7 +118,7 @@ class DetalhesHoleritePage extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 16.0), // Espaço entre os campos
+          const SizedBox(width: 16.0), 
           Flexible(
             flex: 3,
             child: Text(

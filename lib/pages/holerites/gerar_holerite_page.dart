@@ -24,7 +24,6 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
   final AuthMiddleware authMiddleware = AuthMiddleware();
   int? selectedTiposHoleriteId;
 
-  // Listas de objetos
   late List<Colaboradores> colaboradores = [];
   List<Holerites> holerites = [];
   List<TiposHolerite> tiposHoleriteList = [];
@@ -81,7 +80,7 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
       final tiposHolerite = await holeriteService.obterTiposHolerite(token!);
       setState(() {
         tiposHoleriteList =
-            tiposHolerite; // Corrigido para atribuir tiposHolerite
+            tiposHolerite; 
       });
     } catch (error) {
       print('Erro ao carregar tipos de holerite: $error');
@@ -111,7 +110,7 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
         horasExtrasEnabled: horasExtrasEnabled,
         horasExtras: horasExtras,
         tipo:
-            selectedTiposHoleriteId!, // Usar a variável selectedTiposHoleriteId
+            selectedTiposHoleriteId!, 
         token: token!,
       );
 
@@ -129,7 +128,6 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
       );
 
       if (isSuccessful) {
-        // Redirecionar para a HomeHoleritesPage se o holerite for gerado com sucesso
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => const HomeHoleritesPage(),
@@ -197,7 +195,7 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
                           return DropdownMenuItem<int>(
                             value: colaborador.id,
                             child: SizedBox(
-                              width: 250, // Largura desejada
+                              width: 250, 
                               child: Text(
                                 '${colaborador.nome} ${colaborador.sobrenome}',
                               ),
@@ -257,7 +255,7 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
                           return DropdownMenuItem<int>(
                             value: index + 1,
                             child: SizedBox(
-                              width: 100, // Largura desejada
+                              width: 100, 
                               child: Text(_nomeMes(index + 1)),
                             ),
                           );

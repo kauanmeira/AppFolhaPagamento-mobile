@@ -57,7 +57,7 @@ class _EditarCargoState extends State<EditarCargo> {
         ),
       );
 
-      Navigator.of(context).pop(); // Fecha a página de edição
+      Navigator.of(context).pop(); 
     } catch (error) {
       if (error is String) {
         setState(() {

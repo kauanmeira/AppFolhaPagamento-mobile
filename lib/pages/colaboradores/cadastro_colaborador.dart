@@ -111,7 +111,7 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
 
   Future<void> _carregarCargos() async {
     String? token = await usuarioService
-        .getToken(); // Obtenha o token aqui, dependendo de como você o está gerenciando.
+        .getToken(); 
 
     try {
       final cargos = await cargoService.obterCargos(token!);
@@ -144,12 +144,10 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
     String salarioBase = salarioBaseController.text;
     DateFormat inputDateFormat = DateFormat('dd/MM/yyyy');
     DateFormat jsonDateFormat = DateFormat('yyyy-MM-dd');
-    // Analise as datas no formato "dd/MM/yyyy"
     DateTime dataNascimento =
         inputDateFormat.parse(dataNascimentoController.text);
     DateTime dataAdmissao = inputDateFormat.parse(dataAdmissaoController.text);
 
-    // Converter as datas para o formato "yyyy-MM-dd" para o JSON
     String dataNascimentoFormatted = jsonDateFormat.format(dataNascimento);
     String dataAdmissaoFormatted = jsonDateFormat.format(dataAdmissao);
 
@@ -191,7 +189,6 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
       });
 
       if (feedbackMessageResult.toLowerCase().contains('sucesso')) {
-        // Se o cadastro for bem-sucedido, redirecione para a HomeColaboradoresPage
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -382,20 +379,17 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
 
                 if (pickedDate != null) {
                   setState(() {
-                    // Atualizar o controlador com a data formatada na interface
                     dataNascimentoController.text =
                         displayDateFormat.format(pickedDate);
                   });
                 }
               },
               onFieldSubmitted: (value) {
-                // Validar e formatar a data quando o usuário submete o campo
                 try {
                   DateTime parsedDate = inputDateFormat.parse(value);
                   dataNascimentoController.text =
                       displayDateFormat.format(parsedDate);
                 } catch (e) {
-                  // Lida com entradas inválidas aqui
                 }
               },
             ),
@@ -456,17 +450,17 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
             const SizedBox(height: 10),
             DropdownButtonFormField<int>(
               value:
-                  selectedCargoId, // Variável para armazenar o cargo selecionado
+                  selectedCargoId, 
               onChanged: (int? cargoId) {
                 setState(() {
                   selectedCargoId =
-                      cargoId; // Atualize a variável quando o usuário selecionar um cargo
+                      cargoId; 
                 });
               },
               items: cargosList.map((Cargos cargo) {
                 return DropdownMenuItem<int>(
-                  value: cargo.id, // Use o ID do cargo como valor
-                  child: Text(cargo.nome!), // Exiba o nome do cargo no dropdown
+                  value: cargo.id, 
+                  child: Text(cargo.nome!), 
                 );
               }).toList(),
               decoration: const InputDecoration(
@@ -481,18 +475,18 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
             const SizedBox(height: 10),
             DropdownButtonFormField<int>(
               value:
-                  selectedEmpresaId, // Variável para armazenar o cargo selecionado
+                  selectedEmpresaId, 
               onChanged: (int? empresaId) {
                 setState(() {
                   selectedEmpresaId =
-                      empresaId; // Atualize a variável quando o usuário selecionar um cargo
+                      empresaId; 
                 });
               },
               items: empresaList.map((Empresas empresa) {
                 return DropdownMenuItem<int>(
-                  value: empresa.id, // Use o ID do cargo como valor
+                  value: empresa.id, 
                   child: Text(empresa
-                      .nomeFantasia!), // Exiba o nome do cargo no dropdown
+                      .nomeFantasia!), 
                 );
               }).toList(),
               decoration: const InputDecoration(
@@ -518,7 +512,6 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
               ),
               onChanged: (cep) {
                 if (cep.length == 8) {
-                  // Chama a função de busca de endereço quando o CEP tiver 8 dígitos
                   _buscarEnderecoPorCEP(cep);
                 }
               },

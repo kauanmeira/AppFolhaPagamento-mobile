@@ -45,7 +45,6 @@ class _HomeHoleritesPageState extends State<HomeHoleritesPage> {
       final colaborador = await colaboradorService.obterColaboradoresPorId(
           colaboradorId, token!);
 
-      // Verifique se o colaborador não é nulo antes de acessar seus campos
       if (colaborador != null) {
         return '${colaborador.nome} ${colaborador.sobrenome} - CPF: ${colaborador.cpf}';
       } else {

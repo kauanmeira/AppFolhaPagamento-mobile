@@ -86,7 +86,6 @@ class CargoService {
       );
 
       if (response.statusCode == 200) {
-        // Sucesso ao editar o cargo
       } else {
         throw 'Erro ao editar o cargo. Código de status: ${response.statusCode}';
       }
@@ -109,7 +108,6 @@ class CargoService {
       if (response.statusCode == 200) {
         return 'Cargo Deletado com sucesso';
       } else {
-        // Verifique se a resposta contém uma mensagem de erro
         final responseBody = json.decode(response.body);
         final errorMessage = responseBody['message'] ?? 'Erro desconhecido';
         return errorMessage;

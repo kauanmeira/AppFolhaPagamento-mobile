@@ -103,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                     prefixIcon: Icon(Icons.email),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: Color(0xFF008584), // Cor quando focado
+                        color: Color(0xFF008584), 
                       ),
                     ),
                   ),
@@ -118,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                     prefixIcon: Icon(Icons.lock),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: Color(0xFF008584), // Cor quando focado
+                        color: Color(0xFF008584), 
                       ),
                     ),
                   ),

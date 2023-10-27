@@ -46,13 +46,13 @@ class UsuarioService {
 
   Future<List<Usuario>> obterUsuarios() async {
     var url = Uri.parse('$baseUrl/usuario');
-    final token = await getToken(); // Obtenha o token do SharedPreferences
+    final token = await getToken(); 
 
     var response = await http.get(
       url,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token', // Adicione o token ao cabeçalho
+        'Authorization': 'Bearer $token', 
       },
     );
 
@@ -86,11 +86,10 @@ class UsuarioService {
         final usuarioJson = json.decode(response.body);
         final token = usuarioJson['token'];
 
-        // Armazene o token no SharedPreferences
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', token);
 
-        return token; // Retorne o token
+        return token; 
       } else if (response.statusCode == 401) {
         final jsonResponse = json.decode(response.body);
         final errorMessage = jsonResponse['message'];
@@ -180,9 +179,9 @@ class UsuarioService {
         return DateTime.now().isAfter(expirationDate);
       }
 
-      return false; // Não há data de expiração no token
+      return false; 
     } catch (e) {
-      return true; // Erro ao decodificar o token, considerar como expirado
+      return true; 
     }
   }
 
@@ -200,7 +199,6 @@ class UsuarioService {
   }
 
   String generateVerificationCode() {
-    // Gere um código de verificação de 4 dígitos
     final random = Random();
     return (1000 + random.nextInt(9000)).toString();
   }

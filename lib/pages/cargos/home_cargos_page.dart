@@ -77,7 +77,7 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
                 }
 
                 Navigator.of(context).pop();
-                _recarregarCargos(); // Recarrega os dados de cargos
+                _recarregarCargos(); 
               },
             ),
             TextButton(
@@ -123,7 +123,7 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
               future: cargos,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CustomLoadingIndicator(); // Indicador de progresso personalizado
+                  return const CustomLoadingIndicator(); 
                 } else if (snapshot.hasError) {
                   return Text(snapshot.error.toString());
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -153,12 +153,12 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
                                       builder: (context) => EditarCargo(
                                         cargoId: cargo.id!,
                                         recarregarDadosCargos:
-                                            _recarregarCargos, // Passa a função de recarga
+                                            _recarregarCargos, 
                                       ),
                                     ),
                                   )
                                       .then((value) {
-                                    _recarregarCargos(); // Recarrega os dados após edição
+                                    _recarregarCargos(); 
                                   });
                                 },
                               ),
@@ -191,7 +191,7 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
             ),
           )
               .then((value) {
-            _recarregarCargos(); // Recarrega os dados de cargos após cadastro
+            _recarregarCargos(); 
           });
         },
         child: const Icon(Icons.add),

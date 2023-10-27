@@ -23,12 +23,12 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
   final UsuarioService usuarioService = UsuarioService();
   final AuthMiddleware authMiddleware = AuthMiddleware();
 
-  String? selectedUserRole; // Variável para armazenar a escolha do usuário
+  String? selectedUserRole; 
 
   bool _obscureTextSenha =
-      true; // Variável para controlar a visibilidade da senha
+      true; 
   bool _obscureTextConfirmarSenha =
-      true; // Variável para controlar a visibilidade da senha de confirmação
+      true; 
 
   @override
   void dispose() {
@@ -92,7 +92,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
     } else {
       int permissaoId = selectedUserRole == 'Admin'
           ? 1
-          : 2; // Sempre 1 para Admin, 2 para User
+          : 2; 
       try {
         await usuarioService.cadastrarUsuario(
             nome, email, senha, token!, permissaoId);

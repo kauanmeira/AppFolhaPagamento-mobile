@@ -80,7 +80,7 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
                 }
 
                 Navigator.of(context).pop();
-                _recarregarColaboradores(); // Recarrega os dados de colaboradores
+                _recarregarColaboradores(); 
               },
             ),
             TextButton(
@@ -134,7 +134,7 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
                 }
 
                 Navigator.of(context).pop();
-                _recarregarColaboradores(); // Recarrega os dados de colaboradores
+                _recarregarColaboradores(); 
               },
             ),
             TextButton(

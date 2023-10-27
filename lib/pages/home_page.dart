@@ -36,16 +36,13 @@ class HomePage extends StatelessWidget {
                     actions: [
                       TextButton(
                         onPressed: () {
-                          // Feche o diálogo
                           Navigator.of(context).pop();
                         },
                         child: const Text('Não'),
                       ),
                       TextButton(
                         onPressed: () {
-                          // Feche o diálogo
                           Navigator.of(context).pop();
-                          // Redirecione para a página de login
                           Navigator.push(
                             context,
                             MaterialPageRoute(

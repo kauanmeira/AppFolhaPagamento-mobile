@@ -31,8 +31,6 @@ class DetalhesColaboradorPage extends StatelessWidget {
       body: Container(
         padding: const EdgeInsets.all(16.0),
         decoration: const BoxDecoration(
-          // Adicione um fundo colorido ou uma imagem aqui
-          // Exemplo: gradient de cores
           gradient: LinearGradient(
             colors: [Color(0xFF008584), Color(0xFF005050)],
             begin: Alignment.topCenter,
@@ -111,7 +109,7 @@ class DetalhesColaboradorPage extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 16.0), // Espaço entre os campos
+          const SizedBox(width: 16.0), 
           Flexible(
             flex: 3,
             child: Text(

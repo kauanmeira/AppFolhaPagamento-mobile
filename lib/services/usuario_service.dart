@@ -145,13 +145,13 @@ class UsuarioService {
   }
 
   Future<void> editarUsuario(int id, String novoNome, String novoEmail,
-      String novaSenha, String token) async {
+      String novaSenha, int novaPermissao, String token) async {
     try {
       var url = Uri.parse('$baseUrl/usuario/$id');
       final response = await http.put(
         url,
         body: jsonEncode(
-            {'nome': novoNome, 'email': novoEmail, 'senha': novaSenha}),
+            {'nome': novoNome, 'email': novoEmail, 'senha': novaSenha, 'permissaoId': novaPermissao}),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token'

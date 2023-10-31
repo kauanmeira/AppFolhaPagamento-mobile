@@ -22,9 +22,10 @@ class _EditarUsuarioState extends State<EditarUsuario> {
   TextEditingController nomeController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController senhaController = TextEditingController();
-  TextEditingController confirmarSenhaController =
-      TextEditingController(); 
+  TextEditingController confirmarSenhaController = TextEditingController();
   String? feedbackMessage;
+  String? selectedUserRole;
+
   final UsuarioService usuarioService = UsuarioService();
   final AuthMiddleware authMiddleware = AuthMiddleware();
 
@@ -48,8 +49,8 @@ class _EditarUsuarioState extends State<EditarUsuario> {
     String novoNome = nomeController.text;
     String novoEmail = emailController.text;
     String novaSenha = senhaController.text;
-    String confirmarSenha =
-        confirmarSenhaController.text; 
+    String confirmarSenha = confirmarSenhaController.text;
+    String? token = await usuarioService.getToken();
 
     if (!isSenhasIguais(novaSenha, confirmarSenha)) {
       setState(() {
@@ -61,45 +62,51 @@ class _EditarUsuarioState extends State<EditarUsuario> {
           backgroundColor: Colors.red,
         ),
       );
-      return; 
-    }
-    String? token = await usuarioService.getToken();
-
-    try {
-      await usuarioService.editarUsuario(
-          widget.usuarioId, novoNome, novoEmail, novaSenha, token!);
-
+      return;
+    } else if (selectedUserRole == null ||
+        (selectedUserRole != 'Admin' && selectedUserRole != 'User')) {
       setState(() {
-        feedbackMessage = 'Usuario Editado com Sucesso';
+        feedbackMessage =
+            'Por favor, escolha o tipo de usuário (Admin ou User).';
       });
+    } else {
+      int novaPermissao = selectedUserRole == 'Admin' ? 1 : 2;
+      try {
+        await usuarioService.editarUsuario(widget.usuarioId, novoNome,
+            novoEmail, novaSenha, novaPermissao, token!);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(feedbackMessage!),
-          backgroundColor: Colors.green,
-        ),
-      );
+        setState(() {
+          feedbackMessage = 'Usuario Editado com Sucesso';
+        });
 
-      Navigator.of(context).pop(); 
-      widget.recarregarDadosUsuarios(); 
-    } catch (error) {
-      if (error is String) {
-        setState(() {
-          feedbackMessage = error;
-        });
-      } else {
-        print('Erro ao fazer edição: $error');
-        setState(() {
-          feedbackMessage = 'Erro ao fazer edição: $error';
-        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(feedbackMessage!),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        Navigator.of(context).pop();
+        widget.recarregarDadosUsuarios();
+      } catch (error) {
+        if (error is String) {
+          setState(() {
+            feedbackMessage = error;
+          });
+        } else {
+          print('Erro ao fazer edição: $error');
+          setState(() {
+            feedbackMessage = 'Erro ao fazer edição: $error';
+          });
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(feedbackMessage!),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(feedbackMessage!),
-          backgroundColor: Colors.red,
-        ),
-      );
     }
   }
 
@@ -187,10 +194,35 @@ class _EditarUsuarioState extends State<EditarUsuario> {
             TextFormField(
               keyboardType: TextInputType.text,
               obscureText: true,
-              controller:
-                  confirmarSenhaController, 
+              controller: confirmarSenhaController,
               decoration: const InputDecoration(
                 labelText: "Confirmar Senha",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+            DropdownButtonFormField<String>(
+              value: selectedUserRole,
+              onChanged: (newValue) {
+                setState(() {
+                  selectedUserRole = newValue;
+                });
+              },
+              items: const [
+                DropdownMenuItem(
+                  value: 'Admin',
+                  child: Text('Admin'),
+                ),
+                DropdownMenuItem(
+                  value: 'User',
+                  child: Text('User'),
+                ),
+              ],
+              decoration: const InputDecoration(
+                labelText: "Tipo de Usuário",
                 labelStyle: TextStyle(
                   color: Colors.black38,
                   fontWeight: FontWeight.w400,

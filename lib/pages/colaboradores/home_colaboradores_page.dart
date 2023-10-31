@@ -1,6 +1,5 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print
 
-import 'package:app_folha_pagamento/pages/cargos/home_cargos_page.dart';
 import 'package:app_folha_pagamento/services/auth_middleware.dart';
 import 'package:flutter/material.dart';
 import 'package:app_folha_pagamento/models/Colaboradores.dart';
@@ -80,7 +79,7 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
                 }
 
                 Navigator.of(context).pop();
-                _recarregarColaboradores(); 
+                _recarregarColaboradores();
               },
             ),
             TextButton(
@@ -134,7 +133,7 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
                 }
 
                 Navigator.of(context).pop();
-                _recarregarColaboradores(); 
+                _recarregarColaboradores();
               },
             ),
             TextButton(

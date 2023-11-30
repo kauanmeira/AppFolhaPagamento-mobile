@@ -5,6 +5,7 @@ class Colaboradores {
   String? cpf;
   String? nome;
   String? sobrenome;
+  String? email;
   int? salarioBase;
   String? dataNascimento;
   String? dataAdmissao;
@@ -26,6 +27,7 @@ class Colaboradores {
       this.cpf,
       this.nome,
       this.sobrenome,
+      this.email,
       this.salarioBase,
       this.dataNascimento,
       this.dataAdmissao,
@@ -47,6 +49,7 @@ class Colaboradores {
     cpf = json['cpf'];
     nome = json['nome'];
     sobrenome = json['sobrenome'];
+    email = json['email'];
     salarioBase = json['salarioBase'];
     dataNascimento = json['dataNascimento'];
     dataAdmissao = json['dataAdmissao'];
@@ -70,6 +73,7 @@ class Colaboradores {
     data['cpf'] = cpf;
     data['nome'] = nome;
     data['sobrenome'] = sobrenome;
+    data['email'] = email;
     data['salarioBase'] = salarioBase;
     data['dataNascimento'] = dataNascimento;
     data['dataAdmissao'] = dataAdmissao;

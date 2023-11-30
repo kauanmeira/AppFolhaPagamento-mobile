@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print
 
+import 'package:app_folha_pagamento/pages/custom_loading_indicator.dart';
 import 'package:app_folha_pagamento/services/auth_middleware.dart';
 import 'package:flutter/material.dart';
 import 'package:app_folha_pagamento/models/Colaboradores.dart';
@@ -302,25 +303,4 @@ class _HomeColaboradoresPageState extends State<HomeColaboradoresPage> {
   }
 }
 
-class CustomLoadingIndicator extends StatelessWidget {
-  const CustomLoadingIndicator({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF008584)),
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Carregando...',
-            style: TextStyle(color: Color(0xFF008584)),
-          ),
-        ],
-      ),
-    );
-  }
-}

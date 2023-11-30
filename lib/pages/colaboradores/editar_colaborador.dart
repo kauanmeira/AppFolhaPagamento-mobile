@@ -41,6 +41,7 @@ class _EditarColaboradorState extends State<EditarColaborador> {
   TextEditingController bairroController = TextEditingController();
   TextEditingController cidadeController = TextEditingController();
   TextEditingController estadoController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   int? cargoVinculado;
   int? empresaVinculada;
 
@@ -65,6 +66,7 @@ class _EditarColaboradorState extends State<EditarColaborador> {
     cpfController.dispose();
     nomeController.dispose();
     sobrenomeController.dispose();
+    emailController.dispose();
     salarioBaseController.dispose();
     dataNascimentoController.dispose();
     dataAdmissaoController.dispose();
@@ -95,6 +97,7 @@ class _EditarColaboradorState extends State<EditarColaborador> {
     String novoCpf = cpfController.text;
     String novoNome = nomeController.text;
     String novoSobrenome = sobrenomeController.text;
+    String novoEmail = emailController.text;
     String novoSalarioBase = salarioBaseController.text;
 
     DateTime novaDataNascimento =
@@ -122,6 +125,7 @@ class _EditarColaboradorState extends State<EditarColaborador> {
       "cpf": novoCpf,
       "nome": novoNome,
       "sobrenome": novoSobrenome,
+      "email": novoEmail,
       "salarioBase": novoSalarioBase,
       "dataNascimento": dataNascimentoFormatted,
       "dataAdmissao": dataAdmissaoFormatted,
@@ -148,8 +152,9 @@ class _EditarColaboradorState extends State<EditarColaborador> {
           novoCpf,
           novoNome,
           novoSobrenome,
+          novoEmail,
           novoSalarioBase,
-          dataNascimentoFormatted, 
+          dataNascimentoFormatted,
           dataAdmissaoFormatted,
           novoDependentes,
           novoFilhos,
@@ -174,8 +179,8 @@ class _EditarColaboradorState extends State<EditarColaborador> {
         ),
       );
 
-      Navigator.of(context).pop(); 
-      widget.recarregarDadosColaborador(); 
+      Navigator.of(context).pop();
+      widget.recarregarDadosColaborador();
     } catch (error) {
       if (error is String) {
         setState(() {
@@ -228,8 +233,7 @@ class _EditarColaboradorState extends State<EditarColaborador> {
   }
 
   Future<void> _carregarCargos() async {
-    String? token = await usuarioService
-        .getToken(); 
+    String? token = await usuarioService.getToken();
     try {
       final cargos = await cargoService.obterCargos(token!);
       setState(() {

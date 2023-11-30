@@ -9,6 +9,8 @@ import 'package:app_folha_pagamento/services/cargo_service.dart';
 import 'package:app_folha_pagamento/services/usuario_service.dart';
 import 'package:flutter/material.dart';
 
+import '../custom_loading_indicator.dart';
+
 class HomeCargosPage extends StatefulWidget {
   const HomeCargosPage({Key? key}) : super(key: key);
 
@@ -77,7 +79,7 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
                 }
 
                 Navigator.of(context).pop();
-                _recarregarCargos(); 
+                _recarregarCargos();
               },
             ),
             TextButton(
@@ -123,7 +125,7 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
               future: cargos,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CustomLoadingIndicator(); 
+                  return const CustomLoadingIndicator();
                 } else if (snapshot.hasError) {
                   return Text(snapshot.error.toString());
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -153,12 +155,12 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
                                       builder: (context) => EditarCargo(
                                         cargoId: cargo.id!,
                                         recarregarDadosCargos:
-                                            _recarregarCargos, 
+                                            _recarregarCargos,
                                       ),
                                     ),
                                   )
                                       .then((value) {
-                                    _recarregarCargos(); 
+                                    _recarregarCargos();
                                   });
                                 },
                               ),
@@ -191,7 +193,7 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
             ),
           )
               .then((value) {
-            _recarregarCargos(); 
+            _recarregarCargos();
           });
         },
         child: const Icon(Icons.add),
@@ -200,25 +202,4 @@ class _HomeCargosPageState extends State<HomeCargosPage> {
   }
 }
 
-class CustomLoadingIndicator extends StatelessWidget {
-  const CustomLoadingIndicator({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF008584)),
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Carregando...',
-            style: TextStyle(color: Color(0xFF008584)),
-          ),
-        ],
-      ),
-    );
-  }
-}

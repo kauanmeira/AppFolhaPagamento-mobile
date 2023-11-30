@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'package:app_folha_pagamento/models/Holerites.dart';
 import 'package:app_folha_pagamento/models/Tipos_Holerite.dart';
+import 'package:app_folha_pagamento/services/config/api_config.dart';
 import 'package:http/http.dart' as http;
 
 class HoleriteService {
-  final String baseUrl = 'https://192.168.0.240:7256/api';
+  final String baseUrl = ApiConfig.baseUrl;
 
   Future<List<Holerites>> obterHolerites(String token) async {
     var url = Uri.parse('$baseUrl/holerites');
@@ -104,15 +105,19 @@ class HoleriteService {
       );
 
       if (response.statusCode == 201) {
+        // Retorno bem-sucedido
         return 'Holerite cadastrado com sucesso';
       } else if (response.statusCode == 400) {
+        // Erro de validação
         final jsonResponse = json.decode(response.body);
         final errorMessage = jsonResponse['message'];
         throw errorMessage ?? 'Erro ao cadastrar o holerite';
       } else {
+        // Outro erro
         throw 'Erro ao cadastrar o holerite. Código de status: ${response.statusCode}';
       }
     } catch (error) {
+      // Erro durante a execução
       throw 'Erro ao cadastrar o holerite: $error';
     }
   }
@@ -169,4 +174,28 @@ class HoleriteService {
       throw 'Erro ao filtrar Holerites: $error';
     }
   }
+  Future<void> reenviarHolerite(int holeriteId, String token) async {
+    String url = '$baseUrl/holerites/reenviarholerite/$holeriteId';
+
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Sucesso na requisição
+        print('Holerite reenviado com sucesso');
+      } else {
+        // Trate outros códigos de status aqui, se necessário
+        print('Erro ao reenviar holerite - Status: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Trate erros de conexão aqui
+      print('Erro de conexão: $e');
+    }
+  }
+
 }

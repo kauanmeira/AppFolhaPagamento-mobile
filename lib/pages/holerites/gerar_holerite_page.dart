@@ -1,9 +1,9 @@
 // ignore_for_file: library_private_types_in_public_api, avoid_print, use_build_context_synchronously
-
+import 'dart:convert'; // Adicionado import para usar a função jsonEncode
+import 'package:flutter/material.dart';
 import 'package:app_folha_pagamento/models/Tipos_Holerite.dart';
 import 'package:app_folha_pagamento/pages/holerites/home_holerites_page.dart';
 import 'package:app_folha_pagamento/services/auth_middleware.dart';
-import 'package:flutter/material.dart';
 import 'package:app_folha_pagamento/models/Colaboradores.dart';
 import 'package:app_folha_pagamento/models/Holerites.dart';
 import 'package:app_folha_pagamento/services/colaborador_service.dart';
@@ -37,6 +37,8 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
   bool horasExtrasEnabled = false;
   int horasExtras = 0;
   int tipo = 0;
+
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -79,8 +81,7 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
     try {
       final tiposHolerite = await holeriteService.obterTiposHolerite(token!);
       setState(() {
-        tiposHoleriteList =
-            tiposHolerite; 
+        tiposHoleriteList = tiposHolerite;
       });
     } catch (error) {
       print('Erro ao carregar tipos de holerite: $error');
@@ -91,16 +92,13 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
     String? token = await usuarioService.getToken();
 
     try {
-      print('Dados a serem enviados:');
-      print('Colaborador ID: $colaboradorId');
-      print('Ano: $ano');
-      print('Mês: $mes');
-      print('Horas Normais: $horasNormais');
-      print('Horas Extras Habilitadas: $horasExtrasEnabled');
-      if (horasExtrasEnabled) {
-        print('Horas Extras: $horasExtras');
-      }
-      print('Tipo de Holerite ID: $selectedTiposHoleriteId');
+      // Inicia o indicador de carregamento
+      setState(() {
+        isLoading = true;
+      });
+
+      // Imprime o JSON que será enviado para a requisição
+      _printJsonData();
 
       final String responseMessage = await holeriteService.gerarHolerite(
         colaboradorId: colaboradorId,
@@ -109,8 +107,7 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
         horasNormais: horasNormais,
         horasExtrasEnabled: horasExtrasEnabled,
         horasExtras: horasExtras,
-        tipo:
-            selectedTiposHoleriteId!, 
+        tipo: selectedTiposHoleriteId!,
         token: token!,
       );
 
@@ -142,7 +139,41 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
           backgroundColor: Colors.red,
         ),
       );
+    } finally {
+      // Finaliza o indicador de carregamento
+      setState(() {
+        isLoading = false;
+      });
     }
+  }
+
+  // Adicionada a função para imprimir o JSON no console
+  void _printJsonData() {
+    // Criação do objeto com os dados que serão enviados
+    final requestData = {
+      'colaboradorId': colaboradorId,
+      'ano': ano,
+      'mes': mes,
+      'horasNormais': horasNormais,
+      'horasExtrasEnabled': horasExtrasEnabled,
+      'horasExtras': horasExtras,
+      'tipo': selectedTiposHoleriteId,
+    };
+
+    // Converte o objeto para JSON e imprime no console
+    print('JSON a ser enviado: ${jsonEncode(requestData)}');
+
+    // Adiciona logs detalhados para cada campo
+    print('Dados a serem enviados:');
+    print('Colaborador ID: $colaboradorId');
+    print('Ano: $ano');
+    print('Mês: $mes');
+    print('Horas Normais: $horasNormais');
+    print('Horas Extras Habilitadas: $horasExtrasEnabled');
+    if (horasExtrasEnabled) {
+      print('Horas Extras: $horasExtras');
+    }
+    print('Tipo de Holerite ID: $selectedTiposHoleriteId');
   }
 
   @override
@@ -195,7 +226,7 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
                           return DropdownMenuItem<int>(
                             value: colaborador.id,
                             child: SizedBox(
-                              width: 250, 
+                              width: 250,
                               child: Text(
                                 '${colaborador.nome} ${colaborador.sobrenome}',
                               ),
@@ -255,7 +286,7 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
                           return DropdownMenuItem<int>(
                             value: index + 1,
                             child: SizedBox(
-                              width: 100, 
+                              width: 100,
                               child: Text(_nomeMes(index + 1)),
                             ),
                           );
@@ -356,15 +387,19 @@ class _GerarHoleritePageState extends State<GerarHoleritePage> {
                 ),
               ),
               child: TextButton(
-                onPressed: _gerarHolerite,
-                child: const Text(
-                  "Salvar",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                onPressed: isLoading ? null : _gerarHolerite,
+                child: isLoading
+                    ? const CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      )
+                    : const Text(
+                        "Salvar",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
               ),
             ),
           ],

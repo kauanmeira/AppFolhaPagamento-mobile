@@ -36,6 +36,7 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
   TextEditingController bairroController = TextEditingController();
   TextEditingController cidadeController = TextEditingController();
   TextEditingController estadoController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
 
   List<Cargos> cargosList = [];
   List<Empresas> empresaList = [];
@@ -60,6 +61,7 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
     cpfController.dispose();
     nomeController.dispose();
     sobrenomeController.dispose();
+    emailController.dispose();
     salarioBaseController.dispose();
     dataNascimentoController.dispose();
     dataAdmissaoController.dispose();
@@ -110,8 +112,7 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
   }
 
   Future<void> _carregarCargos() async {
-    String? token = await usuarioService
-        .getToken(); 
+    String? token = await usuarioService.getToken();
 
     try {
       final cargos = await cargoService.obterCargos(token!);
@@ -135,12 +136,12 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
     }
   }
 
-
   Future<void> _cadastrar() async {
     print('Cadastrando...');
     String cpf = cpfController.text;
     String nome = nomeController.text;
     String sobrenome = sobrenomeController.text;
+    String email = emailController.text;
     String salarioBase = salarioBaseController.text;
     DateFormat inputDateFormat = DateFormat('dd/MM/yyyy');
     DateFormat jsonDateFormat = DateFormat('yyyy-MM-dd');
@@ -169,6 +170,7 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
               cpf,
               nome,
               sobrenome,
+              email,
               salarioBase,
               dataNascimentoFormatted,
               dataAdmissaoFormatted,
@@ -257,8 +259,6 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
     return text[0].toUpperCase() + text.substring(1);
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -346,6 +346,19 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
             ),
             const SizedBox(height: 10),
             TextFormField(
+              keyboardType: TextInputType.emailAddress,
+              controller: emailController,
+              decoration: const InputDecoration(
+                labelText: "Email",
+                labelStyle: TextStyle(
+                  color: Colors.black38,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextFormField(
               keyboardType: TextInputType.number,
               controller: salarioBaseController,
               decoration: const InputDecoration(
@@ -389,8 +402,7 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
                   DateTime parsedDate = inputDateFormat.parse(value);
                   dataNascimentoController.text =
                       displayDateFormat.format(parsedDate);
-                } catch (e) {
-                }
+                } catch (e) {}
               },
             ),
             const SizedBox(height: 10),
@@ -449,18 +461,16 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
             ),
             const SizedBox(height: 10),
             DropdownButtonFormField<int>(
-              value:
-                  selectedCargoId, 
+              value: selectedCargoId,
               onChanged: (int? cargoId) {
                 setState(() {
-                  selectedCargoId =
-                      cargoId; 
+                  selectedCargoId = cargoId;
                 });
               },
               items: cargosList.map((Cargos cargo) {
                 return DropdownMenuItem<int>(
-                  value: cargo.id, 
-                  child: Text(cargo.nome!), 
+                  value: cargo.id,
+                  child: Text(cargo.nome!),
                 );
               }).toList(),
               decoration: const InputDecoration(
@@ -474,19 +484,16 @@ class _CadastroColaboradorState extends State<CadastroColaborador> {
             ),
             const SizedBox(height: 10),
             DropdownButtonFormField<int>(
-              value:
-                  selectedEmpresaId, 
+              value: selectedEmpresaId,
               onChanged: (int? empresaId) {
                 setState(() {
-                  selectedEmpresaId =
-                      empresaId; 
+                  selectedEmpresaId = empresaId;
                 });
               },
               items: empresaList.map((Empresas empresa) {
                 return DropdownMenuItem<int>(
-                  value: empresa.id, 
-                  child: Text(empresa
-                      .nomeFantasia!), 
+                  value: empresa.id,
+                  child: Text(empresa.nomeFantasia!),
                 );
               }).toList(),
               decoration: const InputDecoration(

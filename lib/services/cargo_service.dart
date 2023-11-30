@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'package:app_folha_pagamento/models/Cargos.dart';
+import 'package:app_folha_pagamento/services/config/api_config.dart';
 import 'package:app_folha_pagamento/services/usuario_service.dart';
 import 'package:http/http.dart' as http;
 
 class CargoService {
-  final String baseUrl = 'https://192.168.0.240:7256/api';
+  final String baseUrl = ApiConfig.baseUrl;
   final UsuarioService usuarioService = UsuarioService();
 
   Future<Map<String, dynamic>?> cadastrarCargo(

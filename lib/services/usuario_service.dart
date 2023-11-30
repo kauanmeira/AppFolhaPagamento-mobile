@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:app_folha_pagamento/models/Usuario.dart';
+import 'package:app_folha_pagamento/services/config/api_config.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,7 +11,8 @@ import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 
 class UsuarioService {
-  final String baseUrl = 'https://192.168.0.240:7256/api';
+    final String baseUrl = ApiConfig.baseUrl;
+
 
   Future<void> cadastrarUsuario(String nome, String email, String senha,
       String token, int permissaoId) async {
@@ -224,4 +226,23 @@ class UsuarioService {
       print('Erro ao enviar o email: $e');
     }
   }
+Future<int?> getRoleFromToken(String token) async {
+  try {
+    List<String> tokenParts = token.split('.');
+
+    String decodedData = utf8.decode(base64Url.decode(tokenParts[1]));
+
+    Map<String, dynamic> decodedMap = json.decode(decodedData);
+
+    int? role = decodedMap['role'];
+
+    return role;
+  } catch (e) {
+    print('Erro ao obter role do token: $e');
+    return null;
+  }
 }
+
+}
+
+

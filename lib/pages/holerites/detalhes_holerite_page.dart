@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 import 'package:app_folha_pagamento/models/Holerites.dart';
@@ -17,6 +18,33 @@ class DetalhesHoleritePage extends StatelessWidget {
     required this.holerite,
   }) : super(key: key);
 
+  Future<void> _mostrarDialogReenvio(BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Reenviar Holerite?'),
+          content: Text(
+            'Deseja realmente reenviar o holerite para o email do colaborador ?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _reenviarHolerite();
+              },
+              child: Text('Reenviar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     authMiddleware.checkAuthAndNavigate(context);
@@ -25,27 +53,33 @@ class DetalhesHoleritePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Holerite',
+          'Folha de Pagamento',
           style: TextStyle(
             fontSize: 24.0,
-            color: Colors.white, 
+            color: Colors.white,
           ),
         ),
         backgroundColor: const Color(0xFF008584),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.email_outlined),
+            onPressed: () => _mostrarDialogReenvio(context),
+          ),
+        ],
       ),
       body: Container(
-        padding: const EdgeInsets.all(16.0),
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF008584), Color(0xFF005050)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+        color: Colors.grey[100],
         child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Icon(
+                Icons.person,
+                size: 80.0,
+                color: Colors.blue,
+              ),
+              const SizedBox(height: 16.0),
               FutureBuilder<String>(
                 future: _obterNomeColaborador(holerite.colaboradorId!),
                 builder: (context, snapshot) {
@@ -56,7 +90,7 @@ class DetalhesHoleritePage extends StatelessWidget {
                       'Erro ao obter nome do colaborador: ${snapshot.error}',
                       style: const TextStyle(
                         fontSize: 18.0,
-                        color: Colors.white,
+                        color: Colors.red,
                       ),
                     );
                   } else {
@@ -114,18 +148,18 @@ class DetalhesHoleritePage extends StatelessWidget {
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18.0,
-                color: Colors.white,
+                color: Colors.black,
               ),
             ),
           ),
-          const SizedBox(width: 16.0), 
+          const SizedBox(width: 16.0),
           Flexible(
             flex: 3,
             child: Text(
               value,
               style: const TextStyle(
                 fontSize: 18.0,
-                color: Colors.white,
+                color: Colors.black87,
               ),
             ),
           ),
@@ -137,6 +171,17 @@ class DetalhesHoleritePage extends StatelessWidget {
   Future<String> _obterNomeColaborador(int colaboradorId) async {
     String? token = await usuarioService.getToken();
     return await holeriteService.obterNomeSobrenomeColaborador(
-        colaboradorId, token!);
+      colaboradorId,
+      token!,
+    );
+  }
+
+  void _reenviarHolerite() async {
+    String? token = await usuarioService.getToken();
+    if (token != null) {
+      holeriteService.reenviarHolerite(holerite.id!, token);
+    } else {
+      print('Erro: Token do usuário não encontrado');
+    }
   }
 }

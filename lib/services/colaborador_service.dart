@@ -1,14 +1,16 @@
 import 'dart:convert';
 import 'package:app_folha_pagamento/models/Colaboradores.dart';
+import 'package:app_folha_pagamento/services/config/api_config.dart';
 import 'package:http/http.dart' as http;
 
 class ColaboradorService {
-  final String baseUrl = 'https://192.168.0.240:7256/api';
+  final String baseUrl = ApiConfig.baseUrl;
 
   Future<String> cadastrarColaborador(
       String cpf,
       String nome,
       String sobrenome,
+      String email,
       String salarioBase,
       String dataNascimento,
       String dataAdmissao,
@@ -30,6 +32,7 @@ class ColaboradorService {
           'cpf': cpf,
           'nome': nome,
           'sobrenome': sobrenome,
+          'email': email,
           'salarioBase': salarioBase,
           'dataNascimento': dataNascimento,
           'dataAdmissao': dataAdmissao,
@@ -154,6 +157,7 @@ class ColaboradorService {
     String novoCpf,
     String novoNome,
     String novoSobrenome,
+    String novoEmail,
     String novoSalarioBase,
     String novaDataNascimento,
     String novaDataAdmissao,
@@ -177,6 +181,7 @@ class ColaboradorService {
           'cpf': novoCpf,
           'nome': novoNome,
           'sobrenome': novoSobrenome,
+          'email': novoEmail,
           'salarioBase': novoSalarioBase,
           'dataNascimento': novaDataNascimento,
           'dataAdmissao': novaDataAdmissao,

@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:app_folha_pagamento/models/Empresas.dart';
+import 'package:app_folha_pagamento/services/config/api_config.dart';
 import 'package:http/http.dart' as http;
 
 class EmpresaService {
-  final String baseUrl = 'https://192.168.0.240:7256/api';
+  final String baseUrl = ApiConfig.baseUrl;
 
   Future<List<Empresas>> obterEmpresas(String token) async {
     var url = Uri.parse('$baseUrl/empresas');

@@ -23,12 +23,10 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
   final UsuarioService usuarioService = UsuarioService();
   final AuthMiddleware authMiddleware = AuthMiddleware();
 
-  String? selectedUserRole; 
+  String? selectedUserRole;
 
-  bool _obscureTextSenha =
-      true; 
-  bool _obscureTextConfirmarSenha =
-      true; 
+  bool _obscureTextSenha = true;
+  bool _obscureTextConfirmarSenha = true;
 
   @override
   void dispose() {
@@ -90,9 +88,7 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
             'Por favor, escolha o tipo de usuário (Admin ou User).';
       });
     } else {
-      int permissaoId = selectedUserRole == 'Admin'
-          ? 1
-          : 2; 
+      int permissaoId = selectedUserRole == 'Admin' ? 1 : 2;
       try {
         await usuarioService.cadastrarUsuario(
             nome, email, senha, token!, permissaoId);
@@ -235,10 +231,6 @@ class _CadastroUsuarioState extends State<CadastroUsuario> {
                 DropdownMenuItem(
                   value: 'Admin',
                   child: Text('Admin'),
-                ),
-                DropdownMenuItem(
-                  value: 'User',
-                  child: Text('User'),
                 ),
               ],
               decoration: const InputDecoration(

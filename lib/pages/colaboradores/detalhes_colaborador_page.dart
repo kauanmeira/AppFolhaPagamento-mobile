@@ -29,14 +29,8 @@ class DetalhesColaboradorPage extends StatelessWidget {
         backgroundColor: const Color(0xFF008584),
       ),
       body: Container(
-        padding: const EdgeInsets.all(16.0),
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF008584), Color(0xFF005050)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+        color: Colors.white, // Define a cor de fundo como branca
+        padding: const EdgeInsets.all(18.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,18 +99,18 @@ class DetalhesColaboradorPage extends StatelessWidget {
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16.0,
-                color: Colors.white,
+                color: Colors.black, // Altera a cor do texto para preto
               ),
             ),
           ),
-          const SizedBox(width: 16.0), 
+          const SizedBox(width: 16.0),
           Flexible(
             flex: 3,
             child: Text(
               value,
               style: const TextStyle(
                 fontSize: 16.0,
-                color: Colors.white,
+                color: Colors.black, // Altera a cor do texto para preto
               ),
             ),
           ),

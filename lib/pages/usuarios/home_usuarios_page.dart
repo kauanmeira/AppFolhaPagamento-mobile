@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, unrelated_type_equality_checks, avoid_print
 
 import 'package:app_folha_pagamento/models/Usuario.dart';
-import 'package:app_folha_pagamento/pages/cargos/home_cargos_page.dart';
+import 'package:app_folha_pagamento/pages/custom_loading_indicator.dart';
 import 'package:app_folha_pagamento/pages/home_page.dart';
 import 'package:app_folha_pagamento/pages/usuarios/cadastro_usuario.dart';
 import 'package:app_folha_pagamento/pages/usuarios/editar_usuario.dart';
@@ -90,7 +90,6 @@ class _HomeUsuariosPageState extends State<HomeUsuariosPage> {
                     Navigator.of(context).pop();
 
                     if (usuario.id == userIdLoggedIn) {
-                   
                     } else {
                       recarregarDadosUsuarios();
                     }

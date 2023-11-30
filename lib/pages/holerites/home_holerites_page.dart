@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_null_comparison, use_build_context_synchronously, avoid_print, use_key_in_widget_constructors
 
+import 'package:app_folha_pagamento/pages/custom_loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:app_folha_pagamento/models/Holerites.dart';
 import 'package:app_folha_pagamento/pages/holerites/detalhes_holerite_page.dart';
@@ -19,6 +20,7 @@ class HomeHoleritesPage extends StatefulWidget {
 
 class _HomeHoleritesPageState extends State<HomeHoleritesPage> {
   late Future<List<Holerites>> holerites;
+  
   final HoleriteService holeriteService = HoleriteService();
   final UsuarioService usuarioService = UsuarioService();
   final ColaboradorService colaboradorService = ColaboradorService();
@@ -237,6 +239,7 @@ class _HomeHoleritesPageState extends State<HomeHoleritesPage> {
                                       builder: (context) =>
                                           DetalhesHoleritePage(
                                         holerite: holerite,
+
                                       ),
                                     ),
                                   );
@@ -292,11 +295,4 @@ final List<String> meses = [
   'Dezembro',
 ];
 
-class CustomLoadingIndicator extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: CircularProgressIndicator(),
-    );
-  }
-}
+
